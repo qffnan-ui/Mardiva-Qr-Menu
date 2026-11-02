@@ -1,0 +1,2165 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mardiva – Yönetim Paneli</title>
+<style>
+/* ===== RESET & BASE ===== */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#1a1b1e;--sidebar-bg:#141517;--card-bg:#232528;
+  --accent:#c9a96e;--accent-hover:#e0c080;--accent-dim:rgba(201,169,110,0.08);
+  --text:#f0ebe0;--text2:#8a8580;--border:#2e3035;
+  --success:#4caf50;--danger:#ef5350;--warning:#ffa726;--info:#42a5f5;
+  --radius:12px;--sidebar-w:260px;--header-h:64px;
+  --font:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',sans-serif;
+}
+html{font-family:var(--font);font-size:14px;background:var(--bg);color:var(--text);scroll-behavior:smooth}
+body{display:flex;min-height:100vh;overflow:hidden}
+a{color:inherit;text-decoration:none}
+button{cursor:pointer;font-family:var(--font)}
+input,select,textarea{font-family:var(--font)}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:#3a3c40;border-radius:4px}
+::-webkit-scrollbar-thumb:hover{background:#4a4c50}
+
+/* ===== SIDEBAR ===== */
+#sidebar{
+  position:fixed;left:0;top:0;bottom:0;width:var(--sidebar-w);
+  background:var(--sidebar-bg);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;z-index:100;overflow-y:auto;overflow-x:hidden;
+}
+.sidebar-logo{
+  padding:22px 20px 16px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:12px;flex-shrink:0;
+}
+.logo-icon{
+  width:38px;height:38px;background:linear-gradient(135deg,var(--accent),#a07848);
+  border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  font-weight:700;font-size:16px;color:#1a1b1e;letter-spacing:-0.5px;
+}
+.logo-text{display:flex;flex-direction:column;line-height:1.2}
+.logo-text strong{font-size:15px;font-weight:700;color:var(--text);letter-spacing:0.2px}
+.logo-text span{font-size:11px;color:var(--text2);font-weight:400}
+
+.nav-section{padding:12px 0 4px;flex:1}
+.nav-label{padding:6px 16px;font-size:10px;text-transform:uppercase;letter-spacing:1.2px;color:var(--text2);font-weight:600}
+.nav-item{
+  display:flex;align-items:center;gap:10px;padding:10px 16px;
+  cursor:pointer;transition:all 0.2s ease;color:var(--text2);font-size:13.5px;
+  border-left:3px solid transparent;font-weight:500;user-select:none;
+}
+.nav-item:hover{background:rgba(255,255,255,0.04);color:var(--text)}
+.nav-item.active{
+  background:var(--accent-dim);color:var(--accent);
+  border-left-color:var(--accent);
+}
+.nav-item svg{width:17px;height:17px;flex-shrink:0;opacity:0.8}
+.nav-item.active svg{opacity:1}
+
+.sidebar-footer{
+  padding:14px 16px;border-top:1px solid var(--border);
+  font-size:11px;color:var(--text2);display:flex;justify-content:space-between;flex-shrink:0;
+}
+
+/* ===== MAIN LAYOUT ===== */
+#main{margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column;min-height:100vh}
+
+/* ===== HEADER ===== */
+#header{
+  position:fixed;top:0;left:var(--sidebar-w);right:0;height:var(--header-h);
+  background:var(--sidebar-bg);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 24px;z-index:99;
+}
+#header-title{font-size:18px;font-weight:700;color:var(--text)}
+#header-title span{font-size:13px;color:var(--text2);font-weight:400;margin-left:8px}
+.header-actions{display:flex;align-items:center;gap:10px}
+.btn{
+  display:inline-flex;align-items:center;gap:7px;padding:8px 16px;
+  border-radius:8px;border:none;font-size:13px;font-weight:600;transition:all 0.2s ease;
+}
+.btn svg{width:15px;height:15px;flex-shrink:0}
+.btn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border)}
+.btn-ghost:hover{background:rgba(255,255,255,0.05);color:var(--text)}
+.btn-accent{background:var(--accent);color:#1a1b1e}
+.btn-accent:hover{background:var(--accent-hover)}
+.btn-success{background:var(--success);color:#fff}
+.btn-success:hover{background:#43a047}
+.btn-danger{background:var(--danger);color:#fff}
+.btn-danger:hover{background:#e53935}
+.btn-info{background:var(--info);color:#fff}
+.btn-info:hover{background:#1e88e5}
+.btn-sm{padding:6px 12px;font-size:12px}
+.btn-icon{padding:7px;border-radius:8px;background:transparent;border:1px solid var(--border);color:var(--text2);transition:all 0.2s}
+.btn-icon:hover{background:rgba(255,255,255,0.06);color:var(--text)}
+.btn-icon svg{width:15px;height:15px}
+.avatar{
+  width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#a07848);
+  display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;
+  color:#1a1b1e;flex-shrink:0;cursor:pointer;
+}
+
+/* ===== CONTENT ===== */
+#content{
+  margin-top:var(--header-h);flex:1;overflow-y:auto;
+  height:calc(100vh - var(--header-h));
+}
+.section{display:none;padding:28px 28px 48px}
+.section.active{display:block}
+.section-header{margin-bottom:24px}
+.section-header h2{font-size:22px;font-weight:700;color:var(--text);margin-bottom:4px}
+.section-header p{font-size:13px;color:var(--text2)}
+
+/* ===== CARDS ===== */
+.card{
+  background:var(--card-bg);border:1px solid var(--border);
+  border-radius:var(--radius);overflow:hidden;
+}
+.card-header{
+  padding:16px 20px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.card-header h3{font-size:14px;font-weight:600;color:var(--text)}
+.card-body{padding:20px}
+
+/* ===== STAT CARDS ===== */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+.stat-card{
+  background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius);
+  padding:20px;border-top:3px solid var(--accent);transition:transform 0.2s;
+}
+.stat-card:hover{transform:translateY(-2px)}
+.stat-card:nth-child(2){border-top-color:var(--info)}
+.stat-card:nth-child(3){border-top-color:var(--success)}
+.stat-card:nth-child(4){border-top-color:var(--warning)}
+.stat-val{font-size:28px;font-weight:700;color:var(--text);margin:6px 0 2px}
+.stat-label{font-size:12px;color:var(--text2);font-weight:500;text-transform:uppercase;letter-spacing:0.5px}
+.stat-sub{font-size:12px;color:var(--text2);margin-top:4px}
+
+/* ===== ACTIVITY LOG ===== */
+.activity-item{
+  display:flex;align-items:flex-start;gap:12px;padding:12px 0;
+  border-bottom:1px solid var(--border);
+}
+.activity-item:last-child{border-bottom:none}
+.activity-dot{
+  width:8px;height:8px;border-radius:50%;background:var(--accent);
+  flex-shrink:0;margin-top:5px;
+}
+.activity-text{font-size:13px;color:var(--text);line-height:1.5}
+.activity-time{font-size:11px;color:var(--text2);margin-top:2px}
+
+/* ===== QUICK ACTIONS ===== */
+.quick-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+
+/* ===== FORM ELEMENTS ===== */
+.form-group{margin-bottom:16px}
+.form-label{
+  display:block;font-size:11px;font-weight:600;color:var(--text2);
+  text-transform:uppercase;letter-spacing:0.7px;margin-bottom:6px;
+}
+.form-input,.form-select,.form-textarea{
+  width:100%;background:var(--bg);border:1px solid var(--border);
+  color:var(--text);border-radius:8px;padding:10px 14px;
+  font-size:13.5px;transition:border-color 0.2s,box-shadow 0.2s;outline:none;
+}
+.form-input:focus,.form-select:focus,.form-textarea:focus{
+  border-color:var(--accent);box-shadow:0 0 0 3px rgba(201,169,110,0.12);
+}
+.form-input[readonly]{color:var(--text2);cursor:default}
+.form-textarea{resize:vertical;min-height:80px;line-height:1.6}
+.form-textarea.tall{min-height:120px}
+.form-select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238a8580' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}
+.form-select option{background:#232528}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.input-group{position:relative}
+.input-prefix{
+  position:absolute;left:12px;top:50%;transform:translateY(-50%);
+  color:var(--text2);font-size:14px;pointer-events:none;
+}
+.input-group .form-input{padding-left:26px}
+
+/* ===== TOGGLE SWITCH ===== */
+.toggle-wrap{display:flex;align-items:center;gap:10px}
+.toggle{position:relative;width:42px;height:24px;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0;position:absolute}
+.toggle-slider{
+  position:absolute;inset:0;background:#3a3c40;border-radius:24px;
+  cursor:pointer;transition:0.2s;
+}
+.toggle-slider:before{
+  content:'';position:absolute;width:18px;height:18px;left:3px;top:3px;
+  background:#fff;border-radius:50%;transition:0.2s;
+}
+.toggle input:checked + .toggle-slider{background:var(--accent)}
+.toggle input:checked + .toggle-slider:before{transform:translateX(18px)}
+.toggle-label{font-size:13px;color:var(--text);cursor:pointer}
+
+/* ===== CHECKBOX ===== */
+.checkbox-group{display:flex;flex-wrap:wrap;gap:10px;margin-top:4px}
+.checkbox-item{display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:var(--text)}
+.checkbox-item input[type=checkbox]{
+  width:16px;height:16px;accent-color:var(--accent);cursor:pointer;
+}
+
+/* ===== TABS ===== */
+.tabs{display:flex;gap:4px;margin-bottom:16px;background:var(--bg);padding:4px;border-radius:10px;border:1px solid var(--border);width:fit-content}
+.tab{
+  padding:7px 18px;border-radius:8px;font-size:13px;font-weight:600;
+  cursor:pointer;transition:all 0.2s;color:var(--text2);border:none;background:transparent;
+}
+.tab.active{background:var(--accent);color:#1a1b1e}
+.tab-content{display:none}
+.tab-content.active{display:block}
+
+/* ===== SPLIT LAYOUT ===== */
+.split-layout{display:grid;grid-template-columns:340px 1fr;gap:16px;align-items:start}
+
+/* ===== ITEM LIST ===== */
+.item-list{max-height:calc(100vh - 230px);overflow-y:auto;padding-right:2px}
+.item-list-controls{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.item-list-controls .form-input,.item-list-controls .form-select{flex:1;min-width:100px}
+.item-entry{
+  display:flex;align-items:center;gap:8px;padding:10px 12px;
+  border-radius:8px;border:1px solid var(--border);background:var(--card-bg);
+  margin-bottom:6px;cursor:pointer;transition:all 0.2s;
+}
+.item-entry:hover{border-color:rgba(201,169,110,0.3);background:rgba(201,169,110,0.04)}
+.item-entry.selected{border-color:var(--accent);background:var(--accent-dim)}
+.item-entry-info{flex:1;min-width:0}
+.item-entry-name{font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.item-entry-meta{display:flex;align-items:center;gap:6px;margin-top:3px;flex-wrap:wrap}
+.badge{
+  padding:2px 8px;border-radius:20px;font-size:10px;font-weight:600;
+  text-transform:uppercase;letter-spacing:0.3px;
+}
+.badge-cat{background:rgba(66,165,245,0.15);color:var(--info)}
+.badge-chef{background:rgba(201,169,110,0.15);color:var(--accent)}
+.badge-spicy{background:rgba(239,83,80,0.15);color:var(--danger)}
+.badge-veg{background:rgba(76,175,80,0.15);color:var(--success)}
+.item-price{font-size:13px;font-weight:700;color:var(--accent);white-space:nowrap}
+.item-actions{display:flex;gap:4px;flex-shrink:0}
+
+/* ===== EDITOR PANEL ===== */
+.editor-panel{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius);position:sticky;top:16px}
+.editor-panel-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.editor-panel-body{padding:20px;max-height:calc(100vh - 200px);overflow-y:auto}
+.editor-panel-footer{padding:16px 20px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end}
+.editor-empty{text-align:center;padding:60px 20px;color:var(--text2)}
+.editor-empty svg{width:48px;height:48px;opacity:0.2;margin:0 auto 12px;display:block}
+.editor-empty p{font-size:14px}
+
+/* ===== TABLE ===== */
+.table-wrap{overflow-x:auto}
+table.data-table{width:100%;border-collapse:collapse}
+table.data-table th{
+  padding:10px 14px;font-size:11px;font-weight:600;text-transform:uppercase;
+  letter-spacing:0.7px;color:var(--text2);border-bottom:1px solid var(--border);
+  text-align:left;white-space:nowrap;
+}
+table.data-table td{
+  padding:10px 14px;font-size:13px;color:var(--text);border-bottom:1px solid rgba(46,48,53,0.5);
+  vertical-align:middle;
+}
+table.data-table tr:last-child td{border-bottom:none}
+table.data-table tr:hover td{background:rgba(255,255,255,0.02)}
+table.data-table tr:nth-child(even) td{background:rgba(255,255,255,0.01)}
+.table-actions{display:flex;gap:4px}
+
+/* ===== ALLERGEN MATRIX ===== */
+.matrix-wrap{overflow-x:auto;max-height:500px;overflow-y:auto}
+table.matrix-table{border-collapse:collapse;min-width:600px}
+table.matrix-table th,table.matrix-table td{
+  padding:8px 10px;border:1px solid var(--border);font-size:12px;white-space:nowrap;
+}
+table.matrix-table th{background:var(--card-bg);color:var(--text2);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:0.5px}
+table.matrix-table td{background:var(--bg)}
+table.matrix-table .sticky-col{position:sticky;left:0;background:var(--card-bg);z-index:2;font-weight:500;color:var(--text);border-right:2px solid var(--border)}
+table.matrix-table input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px}
+
+/* ===== CAMPAIGN PREVIEW ===== */
+.campaign-preview{
+  background:linear-gradient(135deg,#1f1a12,#2a2015);
+  border:1px solid rgba(201,169,110,0.3);border-radius:12px;padding:20px 24px;
+  margin-top:16px;position:relative;overflow:hidden;
+}
+.campaign-preview::before{
+  content:'ÖNIZLEME';position:absolute;top:8px;right:8px;
+  font-size:9px;font-weight:700;letter-spacing:1px;color:var(--accent);
+  background:rgba(201,169,110,0.1);padding:2px 8px;border-radius:4px;
+}
+.cp-badge{
+  display:inline-block;background:var(--accent);color:#1a1b1e;
+  font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;
+  text-transform:uppercase;letter-spacing:0.7px;margin-bottom:8px;
+}
+.cp-title{font-size:18px;font-weight:700;color:var(--text);margin-bottom:4px}
+.cp-desc{font-size:13px;color:var(--text2);margin-bottom:12px}
+.cp-btn{
+  display:inline-flex;align-items:center;gap:6px;background:var(--accent);
+  color:#1a1b1e;padding:8px 18px;border-radius:8px;font-size:13px;font-weight:700;
+}
+
+/* ===== QR GRID ===== */
+.qr-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.qr-card{
+  background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius);
+  padding:16px;text-align:center;transition:all 0.2s;
+}
+.qr-card:hover{border-color:rgba(201,169,110,0.3);transform:translateY(-2px)}
+.qr-svg{width:120px;height:120px;margin:0 auto 10px;display:block}
+.qr-label{font-size:12px;font-weight:600;color:var(--text);margin-bottom:2px}
+.qr-url{font-size:10px;color:var(--text2);margin-bottom:10px;word-break:break-all}
+.qr-card-actions{display:flex;gap:6px;justify-content:center}
+
+/* ===== I18N TABLE ===== */
+.i18n-row{
+  display:grid;grid-template-columns:200px 1fr 1fr;gap:8px;
+  align-items:center;padding:8px 0;border-bottom:1px solid rgba(46,48,53,0.5);
+}
+.i18n-row:last-child{border-bottom:none}
+.i18n-key{font-size:12px;color:var(--text2);font-family:monospace;background:var(--bg);padding:4px 8px;border-radius:4px}
+.i18n-ref{font-size:12px;color:var(--text2);font-style:italic}
+
+/* ===== PROGRESS BAR ===== */
+.progress-bar{background:var(--border);border-radius:4px;height:8px;overflow:hidden;margin-top:6px}
+.progress-fill{height:100%;background:var(--success);border-radius:4px;transition:width 0.3s}
+
+/* ===== TOAST ===== */
+#toast-container{position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.toast{
+  background:#2d2f33;border:1px solid var(--border);border-radius:10px;
+  padding:12px 18px;font-size:13px;color:var(--text);box-shadow:0 8px 32px rgba(0,0,0,0.4);
+  pointer-events:auto;display:flex;align-items:center;gap:10px;min-width:220px;
+  animation:slideUp 0.3s ease;
+}
+.toast.success{border-left:3px solid var(--success)}
+.toast.danger{border-left:3px solid var(--danger)}
+.toast.info{border-left:3px solid var(--info)}
+.toast-icon{width:18px;height:18px;flex-shrink:0}
+@keyframes slideUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeOut{to{opacity:0;transform:translateY(-8px)}}
+
+/* ===== DRAG HANDLE ===== */
+.drag-handle{color:var(--text2);cursor:grab;padding:4px;opacity:0.5;transition:opacity 0.2s}
+.drag-handle:hover{opacity:1}
+.drag-handle svg{width:16px;height:16px;display:block}
+
+/* ===== CATEGORY LIST ===== */
+.cat-row{
+  display:flex;align-items:center;gap:10px;padding:10px 14px;
+  background:var(--card-bg);border:1px solid var(--border);border-radius:8px;
+  margin-bottom:8px;transition:all 0.2s;
+}
+.cat-row:hover{border-color:rgba(201,169,110,0.2)}
+.cat-row .form-input{background:var(--bg)}
+
+/* ===== SHOWCASE TIME ===== */
+.time-block{
+  background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius);
+  overflow:hidden;margin-bottom:16px;
+}
+.time-block-header{
+  padding:14px 20px;background:rgba(255,255,255,0.02);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.time-icon{font-size:20px;margin-right:8px}
+.time-block-body{padding:20px}
+.time-items-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
+.time-item-check{
+  display:flex;align-items:center;gap:6px;padding:6px 10px;
+  background:var(--bg);border-radius:6px;border:1px solid var(--border);
+  font-size:12px;cursor:pointer;transition:all 0.2s;
+}
+.time-item-check:hover{border-color:rgba(201,169,110,0.3)}
+.time-item-check input{accent-color:var(--accent)}
+
+/* ===== CLOCK ===== */
+.live-clock{
+  font-size:32px;font-weight:700;color:var(--accent);text-align:center;
+  letter-spacing:2px;padding:16px;font-variant-numeric:tabular-nums;
+}
+.period-indicator{text-align:center;font-size:13px;color:var(--text2);margin-bottom:8px}
+
+/* ===== BACKUP LIST ===== */
+.backup-item{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 16px;background:var(--bg);border:1px solid var(--border);
+  border-radius:8px;margin-bottom:8px;
+}
+.backup-info .backup-name{font-size:13px;font-weight:600;color:var(--text)}
+.backup-info .backup-meta{font-size:11px;color:var(--text2);margin-top:2px}
+
+/* ===== A11Y SECTION ===== */
+.a11y-slider{-webkit-appearance:none;appearance:none;width:100%;height:6px;background:var(--border);border-radius:3px;outline:none;margin-top:8px}
+.a11y-slider::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--accent);cursor:pointer;border:2px solid var(--bg)}
+.font-preview{
+  background:var(--bg);border:1px solid var(--border);border-radius:8px;
+  padding:16px;margin-top:12px;text-align:center;color:var(--text);line-height:1.6;
+}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:900px){
+  #sidebar{transform:translateX(-100%)}
+  #main{margin-left:0}
+  #header{left:0}
+}
+@media(max-width:1100px){.stats-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:800px){.qr-grid{grid-template-columns:repeat(2,1fr)}}
+
+/* ===== MISC ===== */
+.section-two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+.section-three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;align-items:start}
+.color-input{height:36px;padding:2px 4px;border-radius:6px;width:60px;cursor:pointer;background:var(--bg);border:1px solid var(--border)}
+.divider{height:1px;background:var(--border);margin:20px 0}
+.info-box{
+  background:rgba(66,165,245,0.08);border:1px solid rgba(66,165,245,0.2);
+  border-radius:8px;padding:12px 16px;font-size:13px;color:var(--info);
+  display:flex;align-items:flex-start;gap:10px;
+}
+.info-box svg{width:16px;height:16px;flex-shrink:0;margin-top:1px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+.mt-4{margin-top:4px}.mt-8{margin-top:8px}.mt-12{margin-top:12px}.mt-16{margin-top:16px}.mt-20{margin-top:20px}
+.mb-8{margin-bottom:8px}.mb-12{margin-bottom:12px}.mb-16{margin-bottom:16px}
+.flex{display:flex}.items-center{align-items:center}.justify-between{justify-content:space-between}.gap-8{gap:8px}.gap-12{gap:12px}
+.text-sm{font-size:12px}.text-xs{font-size:11px}.text-accent{color:var(--accent)}.text-muted{color:var(--text2)}.text-success{color:var(--success)}.text-danger{color:var(--danger)}
+.fw-6{font-weight:600}.fw-7{font-weight:700}
+.w-full{width:100%}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+
+<!-- ===== SIDEBAR ===== -->
+<aside id="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">M</div>
+    <div class="logo-text">
+      <strong>Mardiva</strong>
+      <span>Yönetim Paneli</span>
+    </div>
+  </div>
+  <nav class="nav-section">
+    <div class="nav-label">Genel</div>
+    <div class="nav-item active" data-section="dashboard">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Dashboard
+    </div>
+    <div class="nav-label">İçerik</div>
+    <div class="nav-item" data-section="menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      Menü Yönetimi
+    </div>
+    <div class="nav-item" data-section="categories">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+      Kategori Yönetimi
+    </div>
+    <div class="nav-item" data-section="campaign">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      Kampanya Yönetimi
+    </div>
+    <div class="nav-item" data-section="showcase">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      Vitrin &amp; Zaman
+    </div>
+    <div class="nav-label">Ayarlar</div>
+    <div class="nav-item" data-section="allergens">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      Alerjen Yönetimi
+    </div>
+    <div class="nav-item" data-section="i18n">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+      Dil &amp; Çeviri
+    </div>
+    <div class="nav-item" data-section="a11y">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+      Erişilebilirlik
+    </div>
+    <div class="nav-label">Araçlar</div>
+    <div class="nav-item" data-section="qr">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><line x1="14" y1="14" x2="14" y2="14.01"/><line x1="17" y1="14" x2="17" y2="14.01"/><line x1="20" y1="14" x2="20" y2="14.01"/><line x1="14" y1="17" x2="14" y2="17.01"/><line x1="17" y1="17" x2="17" y2="17.01"/><line x1="20" y1="17" x2="20" y2="17.01"/><line x1="14" y1="20" x2="14" y2="20.01"/><line x1="17" y1="20" x2="17" y2="20.01"/><line x1="20" y1="20" x2="20" y2="20.01"/></svg>
+      QR Kod Üretici
+    </div>
+    <div class="nav-item" data-section="export">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Dışa / İçe Aktar
+    </div>
+    <div class="nav-item" onclick="window.open('menu.html','_blank')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      Site Önizlemesi
+    </div>
+  </nav>
+  <div class="sidebar-footer">
+    <span>Mardiva Admin</span>
+    <span>v2.0.0</span>
+  </div>
+</aside>
+
+<!-- ===== HEADER ===== -->
+<div id="main">
+<header id="header">
+  <div>
+    <div id="header-title">Dashboard <span>Genel Bakış</span></div>
+  </div>
+  <div class="header-actions">
+    <button class="btn btn-ghost btn-sm" onclick="window.open('menu.html','_blank')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      Önizleme Aç
+    </button>
+    <button class="btn btn-success btn-sm" onclick="showToast('Değişiklikler başarıyla kaydedildi!','success')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+      Kaydet &amp; Yayınla
+    </button>
+    <div class="avatar" title="Admin">MA</div>
+  </div>
+</header>
+
+<!-- ===== CONTENT ===== -->
+<div id="content">
+
+<!-- =============================== DASHBOARD =============================== -->
+<section id="section-dashboard" class="section active">
+  <div class="section-header">
+    <h2>Dashboard</h2>
+    <p>Menü sistemine genel bakış ve hızlı erişim</p>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-label">Toplam Ürün</div>
+      <div class="stat-val" id="stat-items">28</div>
+      <div class="stat-sub">7 kategoride</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Toplam Kategori</div>
+      <div class="stat-val" id="stat-cats">7</div>
+      <div class="stat-sub">Tüm kategoriler aktif</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Aktif Kampanya</div>
+      <div class="stat-val">1</div>
+      <div class="stat-sub">Günün Tabağı aktif</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Bugünün Önerisi</div>
+      <div class="stat-val" style="font-size:16px;margin-top:10px">Kaburga Dolması</div>
+      <div class="stat-sub">760 ₺</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header">
+        <h3>Son Aktiviteler</h3>
+        <span class="text-xs text-muted">Son 7 gün</span>
+      </div>
+      <div class="card-body">
+        <div class="activity-item">
+          <div class="activity-dot" style="background:var(--accent)"></div>
+          <div>
+            <div class="activity-text">Kaburga Dolması fiyatı güncellendi: <strong>720₺ → 760₺</strong></div>
+            <div class="activity-time">2 saat önce</div>
+          </div>
+        </div>
+        <div class="activity-item">
+          <div class="activity-dot" style="background:var(--success)"></div>
+          <div>
+            <div class="activity-text">Yeni ürün eklendi: <strong>Künefe</strong></div>
+            <div class="activity-time">4 saat önce</div>
+          </div>
+        </div>
+        <div class="activity-item">
+          <div class="activity-dot" style="background:var(--info)"></div>
+          <div>
+            <div class="activity-text">Kampanya başlığı değiştirildi</div>
+            <div class="activity-time">1 gün önce</div>
+          </div>
+        </div>
+        <div class="activity-item">
+          <div class="activity-dot" style="background:var(--warning)"></div>
+          <div>
+            <div class="activity-text">Filtre etiketi eklendi: <strong>Glutensiz</strong></div>
+            <div class="activity-time">2 gün önce</div>
+          </div>
+        </div>
+        <div class="activity-item">
+          <div class="activity-dot" style="background:var(--text2)"></div>
+          <div>
+            <div class="activity-text">Arapça çeviri güncellendi: <strong>Sembusek</strong></div>
+            <div class="activity-time">3 gün önce</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><h3>Hızlı İşlemler</h3></div>
+      <div class="card-body">
+        <div class="quick-actions" style="flex-direction:column;gap:10px">
+          <button class="btn btn-accent w-full" onclick="gotoSection('menu');setTimeout(()=>openNewItem(),300)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Yeni Ürün Ekle
+          </button>
+          <button class="btn btn-ghost w-full" onclick="gotoSection('categories')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Yeni Kategori Ekle
+          </button>
+          <button class="btn btn-ghost w-full" onclick="gotoSection('campaign')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            Kampanyayı Düzenle
+          </button>
+          <button class="btn btn-ghost w-full" onclick="gotoSection('qr')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="5" height="5"/><rect x="16" y="3" width="5" height="5"/><rect x="3" y="16" width="5" height="5"/></svg>
+            QR Kod Oluştur
+          </button>
+        </div>
+        <div class="divider"></div>
+        <div class="info-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span>Menü verileri yalnızca tarayıcıda saklanmaktadır. Değişikliklerinizi JSON olarak dışa aktarın.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card mt-16">
+    <div class="card-header"><h3>Kategori Dağılımı</h3></div>
+    <div class="card-body">
+      <div id="cat-dist-grid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:12px;text-align:center"></div>
+    </div>
+  </div>
+</section>
+
+<!-- =============================== MENU MANAGEMENT =============================== -->
+<section id="section-menu" class="section">
+  <div class="section-header">
+    <h2>Menü Yönetimi</h2>
+    <p>Ürünleri ekle, düzenle ve yönet</p>
+  </div>
+
+  <div class="split-layout">
+    <!-- LEFT: Item List -->
+    <div>
+      <div class="card">
+        <div class="card-header">
+          <h3>Ürün Listesi</h3>
+          <button class="btn btn-accent btn-sm" onclick="openNewItem()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Yeni Ekle
+          </button>
+        </div>
+        <div class="card-body">
+          <div class="item-list-controls">
+            <select class="form-select" id="menu-cat-filter" onchange="renderItemList()" style="flex:1;max-width:160px">
+              <option value="">Tüm Kategoriler</option>
+            </select>
+            <input class="form-input" type="text" id="menu-search" placeholder="Ürün ara..." oninput="renderItemList()">
+          </div>
+          <div class="item-list" id="item-list"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Editor -->
+    <div class="editor-panel" id="editor-panel">
+      <div class="editor-panel-header">
+        <h3 id="editor-title">Ürün Düzenle</h3>
+        <div class="tabs" style="margin-bottom:0">
+          <button class="tab active" onclick="switchLangTab('tr',this)">TR</button>
+          <button class="tab" onclick="switchLangTab('en',this)">EN</button>
+          <button class="tab" onclick="switchLangTab('ar',this)">AR</button>
+        </div>
+      </div>
+      <div class="editor-panel-body" id="editor-body">
+        <div class="editor-empty">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          <p>Bir ürün seçin veya yeni ürün ekleyin</p>
+        </div>
+      </div>
+      <div class="editor-panel-footer hidden" id="editor-footer">
+        <button class="btn btn-ghost" onclick="cancelEdit()">İptal</button>
+        <button class="btn btn-accent" onclick="saveItem()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+          Kaydet
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =============================== CATEGORIES =============================== -->
+<section id="section-categories" class="section">
+  <div class="section-header">
+    <h2>Kategori Yönetimi</h2>
+    <p>Kategorileri düzenle, sırala ve yönet</p>
+  </div>
+
+  <div class="grid-2" style="align-items:start">
+    <div class="card">
+      <div class="card-header"><h3>Yeni Kategori Ekle</h3></div>
+      <div class="card-body">
+        <div class="form-row-3">
+          <div class="form-group">
+            <label class="form-label">Türkçe Ad</label>
+            <input class="form-input" id="new-cat-tr" placeholder="Türkçe">
+          </div>
+          <div class="form-group">
+            <label class="form-label">İngilizce Ad</label>
+            <input class="form-input" id="new-cat-en" placeholder="English">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Arapça Ad</label>
+            <input class="form-input" id="new-cat-ar" placeholder="عربي" dir="rtl">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Kategori ID (slug)</label>
+          <input class="form-input" id="new-cat-id" placeholder="ornek-kategori">
+        </div>
+        <button class="btn btn-accent" onclick="addCategory()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Kategori Ekle
+        </button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <h3>Kategoriler</h3>
+        <span class="text-xs text-muted">Sıralamak için sürükleyin</span>
+      </div>
+      <div class="card-body">
+        <div id="cat-list"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =============================== CAMPAIGN =============================== -->
+<section id="section-campaign" class="section">
+  <div class="section-header">
+    <h2>Kampanya Yönetimi</h2>
+    <p>Günün tabağı ve tanıtım şeridini yönet</p>
+  </div>
+
+  <div class="grid-2" style="align-items:start">
+    <div>
+      <div class="card mb-16">
+        <div class="card-header">
+          <h3>Kampanya Ayarları</h3>
+          <div class="toggle-wrap">
+            <label class="toggle">
+              <input type="checkbox" id="campaign-active" checked onchange="updateCampaignPreview()">
+              <span class="toggle-slider"></span>
+            </label>
+            <span class="toggle-label" style="font-size:12px;color:var(--text2)">Aktif</span>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="form-group">
+            <label class="form-label">Günün Tabağı – Ürün</label>
+            <select class="form-select" id="campaign-item" onchange="updateCampaignPreview()">
+            </select>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Başlangıç Tarihi</label>
+              <input type="date" class="form-input" id="camp-start">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Bitiş Tarihi</label>
+              <input type="date" class="form-input" id="camp-end">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><h3>Şerit Metinleri</h3></div>
+        <div class="card-body">
+          <div class="tabs">
+            <button class="tab active" onclick="switchCampTab('tr',this)">TR</button>
+            <button class="tab" onclick="switchCampTab('en',this)">EN</button>
+            <button class="tab" onclick="switchCampTab('ar',this)">AR</button>
+          </div>
+          <div id="camp-tr" class="camp-lang-tab">
+            <div class="form-group"><label class="form-label">Rozet</label><input class="form-input" id="camp-badge-tr" value="Günün Tabağı" oninput="updateCampaignPreview()"></div>
+            <div class="form-group"><label class="form-label">Açıklama</label><textarea class="form-textarea" id="camp-desc-tr" oninput="updateCampaignPreview()">Taş fırında 6 saat ağır ateşte demlendi</textarea></div>
+            <div class="form-group"><label class="form-label">Buton Metni</label><input class="form-input" id="camp-btn-tr" value="İncele" oninput="updateCampaignPreview()"></div>
+          </div>
+          <div id="camp-en" class="camp-lang-tab hidden">
+            <div class="form-group"><label class="form-label">Badge</label><input class="form-input" id="camp-badge-en" value="Dish of the Day" oninput="updateCampaignPreview()"></div>
+            <div class="form-group"><label class="form-label">Description</label><textarea class="form-textarea" id="camp-desc-en" oninput="updateCampaignPreview()">Slow-roasted for 6 hours in our traditional stone oven</textarea></div>
+            <div class="form-group"><label class="form-label">Button Text</label><input class="form-input" id="camp-btn-en" value="Explore" oninput="updateCampaignPreview()"></div>
+          </div>
+          <div id="camp-ar" class="camp-lang-tab hidden">
+            <div class="form-group"><label class="form-label">الشارة</label><input class="form-input" id="camp-badge-ar" value="طبق اليوم" dir="rtl" oninput="updateCampaignPreview()"></div>
+            <div class="form-group"><label class="form-label">الوصف</label><textarea class="form-textarea" id="camp-desc-ar" dir="rtl" oninput="updateCampaignPreview()">مطهو ببطء في الفرن الحجري لمدة ٦ ساعات كاملة</textarea></div>
+            <div class="form-group"><label class="form-label">نص الزر</label><input class="form-input" id="camp-btn-ar" value="استكشف" dir="rtl" oninput="updateCampaignPreview()"></div>
+          </div>
+          <button class="btn btn-accent mt-8" onclick="saveCampaign()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/></svg>
+            Kampanyayı Kaydet
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card">
+        <div class="card-header"><h3>Canlı Önizleme</h3></div>
+        <div class="card-body">
+          <div class="campaign-preview" id="campaign-preview">
+            <div class="cp-badge" id="cp-badge">Günün Tabağı</div>
+            <div class="cp-title" id="cp-title">Kaburga Dolması</div>
+            <div class="cp-desc" id="cp-desc">Taş fırında 6 saat ağır ateşte demlendi</div>
+            <div class="cp-btn" id="cp-btn">
+              İncele
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =============================== SHOWCASE & TIME =============================== -->
+<section id="section-showcase" class="section">
+  <div class="section-header">
+    <h2>Vitrin &amp; Zaman</h2>
+    <p>Zaman dilimine göre öne çıkan ürünleri belirle</p>
+  </div>
+
+  <div class="grid-2 mb-16" style="align-items:start">
+    <div class="card">
+      <div class="card-body" style="text-align:center">
+        <div class="period-indicator" id="period-label">Aktif dönem hesaplanıyor...</div>
+        <div class="live-clock" id="live-clock">--:--:--</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><h3>Otomatik Zaman Dilimi</h3></div>
+      <div class="card-body">
+        <div class="info-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span>Saat aralıkları ayarlanarak menü vitrininde otomatik olarak doğru zaman diliminin ürünleri gösterilir.</span>
+        </div>
+        <div class="form-row mt-12">
+          <div class="form-group"><label class="form-label">Sabah Başlangıç</label><input type="time" class="form-input" value="06:00"></div>
+          <div class="form-group"><label class="form-label">Sabah Bitiş</label><input type="time" class="form-input" value="11:59"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Öğle Başlangıç</label><input type="time" class="form-input" value="12:00"></div>
+          <div class="form-group"><label class="form-label">Öğle Bitiş</label><input type="time" class="form-input" value="17:59"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Akşam Başlangıç</label><input type="time" class="form-input" value="18:00"></div>
+          <div class="form-group"><label class="form-label">Akşam Bitiş</label><input type="time" class="form-input" value="23:59"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="showcase-blocks"></div>
+
+  <div class="mt-16">
+    <button class="btn btn-accent" onclick="saveShowcase()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/></svg>
+      Vitrin Ayarlarını Kaydet
+    </button>
+  </div>
+</section>
+
+<!-- =============================== ALLERGENS =============================== -->
+<section id="section-allergens" class="section">
+  <div class="section-header">
+    <h2>Alerjen Yönetimi</h2>
+    <p>Alerjen tanımları ve ürün-alerjen matrisi</p>
+  </div>
+
+  <div class="grid-2 mb-16" style="align-items:start">
+    <div class="card">
+      <div class="card-header"><h3>Alerjen Tanımları</h3></div>
+      <div class="card-body">
+        <div class="table-wrap">
+          <table class="data-table" id="allergen-def-table">
+            <thead><tr><th>ID</th><th>Türkçe</th><th>İngilizce</th><th>Arapça</th><th></th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><h3>Yeni Alerjen Ekle</h3></div>
+      <div class="card-body">
+        <div class="form-group"><label class="form-label">ID (slug)</label><input class="form-input" id="new-alg-id" placeholder="ornek-alerjen"></div>
+        <div class="form-row-3">
+          <div class="form-group"><label class="form-label">TR</label><input class="form-input" id="new-alg-tr" placeholder="Türkçe"></div>
+          <div class="form-group"><label class="form-label">EN</label><input class="form-input" id="new-alg-en" placeholder="English"></div>
+          <div class="form-group"><label class="form-label">AR</label><input class="form-input" id="new-alg-ar" placeholder="عربي" dir="rtl"></div>
+        </div>
+        <button class="btn btn-accent" onclick="addAllergen()">Alerjen Ekle</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><h3>Ürün–Alerjen Matrisi</h3><span class="text-xs text-muted">İşaretli hücreler içerir</span></div>
+    <div class="card-body">
+      <div class="matrix-wrap">
+        <table class="matrix-table" id="allergen-matrix"></table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =============================== I18N =============================== -->
+<section id="section-i18n" class="section">
+  <div class="section-header">
+    <h2>Dil &amp; Çeviri</h2>
+    <p>UI metinlerini ve çevirileri yönet</p>
+  </div>
+
+  <div class="grid-2 mb-16">
+    <div class="card">
+      <div class="card-header"><h3>İngilizce (EN)</h3></div>
+      <div class="card-body">
+        <div class="flex justify-between items-center mb-8">
+          <span class="text-sm text-muted">Tamamlanma</span>
+          <span class="text-sm text-success fw-6">100%</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><h3>Arapça (AR)</h3></div>
+      <div class="card-body">
+        <div class="flex justify-between items-center mb-8">
+          <span class="text-sm text-muted">Tamamlanma</span>
+          <span class="text-sm text-success fw-6">100%</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <h3>UI Metinleri</h3>
+      <div class="tabs" style="margin-bottom:0">
+        <button class="tab active" onclick="switchI18nTab('tr',this)">TR</button>
+        <button class="tab" onclick="switchI18nTab('en',this)">EN</button>
+        <button class="tab" onclick="switchI18nTab('ar',this)">AR</button>
+      </div>
+    </div>
+    <div class="card-body">
+      <div id="i18n-tr" class="i18n-lang"></div>
+      <div id="i18n-en" class="i18n-lang hidden"></div>
+      <div id="i18n-ar" class="i18n-lang hidden"></div>
+      <div class="mt-16">
+        <button class="btn btn-accent" onclick="saveI18n()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/></svg>
+          Tüm Değişiklikleri Kaydet
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =============================== A11Y =============================== -->
+<section id="section-a11y" class="section">
+  <div class="section-header">
+    <h2>Erişilebilirlik</h2>
+    <p>Menü sitesinin erişilebilirlik özelliklerini yapılandır</p>
+  </div>
+
+  <div class="grid-2" style="align-items:start">
+    <div>
+      <div class="card mb-16">
+        <div class="card-header"><h3>Yazı Tipi Ayarları</h3></div>
+        <div class="card-body">
+          <div class="form-group">
+            <label class="form-label">Büyük Yazı Modu – Varsayılan Font Boyutu Artışı</label>
+            <div class="toggle-wrap mt-8">
+              <label class="toggle"><input type="checkbox" id="a11y-large-text" onchange="updateFontPreview()"><span class="toggle-slider"></span></label>
+              <span class="toggle-label">Büyük Yazı Modunu Etkinleştir (+2px artış)</span>
+            </div>
+          </div>
+          <div class="form-group mt-12">
+            <label class="form-label">Temel Font Boyutu: <span id="font-size-label">14px</span></label>
+            <input type="range" class="a11y-slider" id="font-size-slider" min="12" max="20" value="14" step="1" oninput="updateFontPreview()">
+          </div>
+          <div class="font-preview" id="font-preview">
+            <div style="font-size:var(--preview-size,14px);font-weight:600">Mardiva – Mardin'in Sesi</div>
+            <div style="font-size:var(--preview-size,14px);color:var(--text2);margin-top:6px">Kaburga Dolması · Taş fırında 6 saat</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card mb-16">
+        <div class="card-header"><h3>Arapça Tipografi</h3></div>
+        <div class="card-body">
+          <div class="form-group">
+            <label class="form-label">Satır Aralığı Çarpanı: <span id="line-height-label">1.6</span></label>
+            <input type="range" class="a11y-slider" id="line-height-slider" min="1.0" max="2.0" value="1.6" step="0.1" oninput="document.getElementById('line-height-label').textContent=parseFloat(this.value).toFixed(1)">
+          </div>
+          <div style="direction:rtl;font-family:'Scheherazade New',serif;border:1px solid var(--border);border-radius:8px;padding:14px;margin-top:10px;color:var(--text);font-size:16px" id="ar-preview">
+            كباب عربي مشوي على الفحم مع التوابل الطازجة
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card mb-16">
+        <div class="card-header"><h3>Görsel Ayarlar</h3></div>
+        <div class="card-body">
+          <div class="form-group">
+            <label class="form-label mb-8">Yüksek Kontrast Modu</label>
+            <div class="toggle-wrap">
+              <label class="toggle"><input type="checkbox" id="a11y-high-contrast"><span class="toggle-slider"></span></label>
+              <span class="toggle-label">Alternatif yüksek kontrast paletini etkinleştir</span>
+            </div>
+          </div>
+          <div class="divider"></div>
+          <div class="form-group">
+            <label class="form-label mb-8">Klavye Navigasyonu</label>
+            <div class="toggle-wrap">
+              <label class="toggle"><input type="checkbox" id="a11y-keyboard" checked><span class="toggle-slider"></span></label>
+              <span class="toggle-label">Klavye ile gezinmeyi etkinleştir (Tab / Enter)</span>
+            </div>
+          </div>
+          <div class="divider"></div>
+          <div class="form-group">
+            <label class="form-label mb-8">ARIA Etiket Görünürlüğü (Geliştirici)</label>
+            <div class="toggle-wrap">
+              <label class="toggle"><input type="checkbox" id="a11y-aria"><span class="toggle-slider"></span></label>
+              <span class="toggle-label">ARIA etiketlerini ekranda göster (dev modu)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><h3>Renk Erişilebilirliği</h3></div>
+        <div class="card-body">
+          <div class="info-box mb-12">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <span>Mevcut tema WCAG 2.1 AA standardını karşılamaktadır. Kontrastlar aşağıdaki gibidir.</span>
+          </div>
+          <table class="data-table">
+            <thead><tr><th>Renk Çifti</th><th>Oran</th><th>Standart</th></tr></thead>
+            <tbody>
+              <tr><td>Metin / Arka plan</td><td class="text-success">12.4:1</td><td class="text-success">AAA ✓</td></tr>
+              <tr><td>Altın vurgu / Arka plan</td><td class="text-success">7.1:1</td><td class="text-success">AA ✓</td></tr>
+              <tr><td>İkincil metin / Arka plan</td><td class="text-warning">3.8:1</td><td class="text-warning">AA ✓</td></tr>
+            </tbody>
+          </table>
+          <button class="btn btn-accent mt-16" onclick="saveA11y()">Erişilebilirlik Ayarlarını Kaydet</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =============================== QR GENERATOR =============================== -->
+<section id="section-qr" class="section">
+  <div class="section-header">
+    <h2>QR Kod Üretici</h2>
+    <p>Masa QR kodlarını oluştur ve yönet</p>
+  </div>
+
+  <div class="grid-2 mb-16" style="align-items:start">
+    <div class="card">
+      <div class="card-header"><h3>QR Kod Ayarları</h3></div>
+      <div class="card-body">
+        <div class="form-group">
+          <label class="form-label">Temel URL</label>
+          <input class="form-input" id="qr-base-url" value="https://mardiva.menu">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Masa Sayısı</label>
+          <input class="form-input" type="number" id="qr-table-count" value="20" min="1" max="100">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Büyüklük</label>
+          <div class="checkbox-group">
+            <label class="checkbox-item"><input type="radio" name="qr-size" value="80" checked> Küçük</label>
+            <label class="checkbox-item"><input type="radio" name="qr-size" value="120"> Orta</label>
+            <label class="checkbox-item"><input type="radio" name="qr-size" value="160"> Büyük</label>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Ön Plan Rengi</label>
+            <input type="color" class="color-input" id="qr-fg" value="#c9a96e">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Arka Plan</label>
+            <input type="color" class="color-input" id="qr-bg" value="#1a1b1e">
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="toggle-wrap">
+            <label class="toggle"><input type="checkbox" id="qr-logo" checked><span class="toggle-slider"></span></label>
+            <span class="toggle-label">Logo Dahil Et</span>
+          </div>
+        </div>
+        <div class="flex gap-8 mt-8">
+          <button class="btn btn-accent" onclick="generateQRGrid()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="5" height="5"/><rect x="16" y="3" width="5" height="5"/><rect x="3" y="16" width="5" height="5"/></svg>
+            Otomatik Oluştur
+          </button>
+          <button class="btn btn-ghost" onclick="showToast('ZIP oluşturuldu ve indirildi.','info')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Tümünü İndir (ZIP)
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><h3>Örnek QR Önizlemesi</h3></div>
+      <div class="card-body" style="text-align:center">
+        <svg id="qr-sample-svg" width="180" height="180" viewBox="0 0 180 180" style="border-radius:8px;border:1px solid var(--border)"></svg>
+        <div class="mt-8 text-sm text-muted">Masa 1 – https://mardiva.menu?masa=1</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <h3>QR Kodları</h3>
+      <span class="text-xs text-muted" id="qr-count-label">20 masa</span>
+    </div>
+    <div class="card-body">
+      <div class="qr-grid" id="qr-grid"></div>
+    </div>
+  </div>
+</section>
+
+<!-- =============================== EXPORT =============================== -->
+<section id="section-export" class="section">
+  <div class="section-header">
+    <h2>Dışa / İçe Aktar</h2>
+    <p>Menü verilerini yedekle, dışa aktar veya içe aktar</p>
+  </div>
+
+  <div class="grid-2 mb-16" style="align-items:start">
+    <div class="card">
+      <div class="card-header"><h3>Dışa Aktar</h3></div>
+      <div class="card-body">
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <button class="btn btn-accent" onclick="exportJSON()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Menü Verisini JSON Olarak Dışa Aktar
+          </button>
+          <button class="btn btn-ghost" onclick="showToast('HTML dosyası oluşturuluyor...','info')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            Tam HTML Dosyasını Dışa Aktar
+          </button>
+          <button class="btn btn-ghost" onclick="createBackup()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            Yedek Oluştur
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><h3>İçe Aktar</h3></div>
+      <div class="card-body">
+        <div class="form-group">
+          <label class="form-label">JSON Dosyası Yükle</label>
+          <input type="file" accept=".json" class="form-input" id="import-file" onchange="previewImport(this)">
+        </div>
+        <div id="import-preview" class="hidden">
+          <div class="info-box mb-12">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 8 12 12 14 14"/></svg>
+            <span id="import-preview-text">Dosya yüklendi.</span>
+          </div>
+          <button class="btn btn-success" onclick="confirmImport()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            Onayla ve İçe Aktar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><h3>Yedekler</h3></div>
+    <div class="card-body">
+      <div id="backup-list">
+        <div class="backup-item">
+          <div class="backup-info">
+            <div class="backup-name">mardiva-backup-2026-10-12.json</div>
+            <div class="backup-meta">12 Eki 2026 · 18:30 · 42 KB</div>
+          </div>
+          <div class="table-actions">
+            <button class="btn btn-ghost btn-sm" onclick="showToast('Yedek geri yüklendi.','success')">Geri Yükle</button>
+            <button class="btn btn-danger btn-sm" onclick="this.closest('.backup-item').remove();showToast('Yedek silindi.','danger')">Sil</button>
+          </div>
+        </div>
+        <div class="backup-item">
+          <div class="backup-info">
+            <div class="backup-name">mardiva-backup-2026-10-10.json</div>
+            <div class="backup-meta">10 Eki 2026 · 09:15 · 40 KB</div>
+          </div>
+          <div class="table-actions">
+            <button class="btn btn-ghost btn-sm" onclick="showToast('Yedek geri yüklendi.','success')">Geri Yükle</button>
+            <button class="btn btn-danger btn-sm" onclick="this.closest('.backup-item').remove();showToast('Yedek silindi.','danger')">Sil</button>
+          </div>
+        </div>
+        <div class="backup-item">
+          <div class="backup-info">
+            <div class="backup-name">mardiva-backup-2026-10-05.json</div>
+            <div class="backup-meta">5 Eki 2026 · 14:00 · 38 KB</div>
+          </div>
+          <div class="table-actions">
+            <button class="btn btn-ghost btn-sm" onclick="showToast('Yedek geri yüklendi.','success')">Geri Yükle</button>
+            <button class="btn btn-danger btn-sm" onclick="this.closest('.backup-item').remove();showToast('Yedek silindi.','danger')">Sil</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</div><!-- #content -->
+</div><!-- #main -->
+
+<!-- ===== TOAST CONTAINER ===== -->
+<div id="toast-container"></div>
+
+<!-- ===== JAVASCRIPT ===== -->
+<script>
+/* ====================== DATA ====================== */
+var ADMIN_DATA = {
+  categories: [
+    {id:'starters', name:{tr:'Başlangıçlar',en:'Starters',ar:'المقبلات'}},
+    {id:'soups',    name:{tr:'Çorbalar',en:'Soups',ar:'الشوربات'}},
+    {id:'grill',    name:{tr:'Izgaralar',en:'From the Grill',ar:'المشاويات'}},
+    {id:'mardin',   name:{tr:'Mardin Mutfağı',en:'Mardin Kitchen',ar:'المطبخ الماردينيّ'}},
+    {id:'oven',     name:{tr:'Fırından',en:'From the Oven',ar:'من الفرن'}},
+    {id:'desserts', name:{tr:'Tatlılar',en:'Desserts',ar:'الحلويات'}},
+    {id:'drinks',   name:{tr:'İçecekler',en:'Drinks',ar:'المشروبات'}}
+  ],
+  items: [
+    {id:'sembusek',      cat:'starters', price:190, chef:0, spicy:0, veg:0, allergens:['gluten','egg'],
+     tr:{name:'Sembusek',desc:'Mardin\'in geleneksel kıymalı böreği, taş fırında çıtır çıtır pişirilir.',story:'Sembusek, yüzyıllık bir Mardin lezzeti...',portion:'3 adet',ingredients:'Un, Kıyma, Soğan, Yumurta, Baharatlar'},
+     en:{name:'Sembusek',desc:'Traditional Mardin pastry with minced meat, crispy baked in stone oven.',story:'Sembusek is a century-old Mardin delicacy...',portion:'3 pcs',ingredients:'Flour, Minced Meat, Onion, Egg, Spices'},
+     ar:{name:'سمبوسك',desc:'فطيرة ماردين التقليدية باللحم المفروم، محمصة في فرن حجري.',story:'السمبوسك لذة ماردينية عريقة...',portion:'٣ قطع',ingredients:'دقيق، لحم مفروم، بصل، بيض، بهارات'}},
+    {id:'icli_kofte',    cat:'starters', price:210, chef:0, spicy:0, veg:0, allergens:['gluten','nuts'],
+     tr:{name:'İçli Köfte',desc:'Bulgur kabuğu içinde baharatlı kıyma ile dolu klasik Mardin lezzeti.',story:'İçli köfte, Mardin\'in sembolü olmuştur...',portion:'4 adet',ingredients:'Bulgur, Kıyma, Ceviz, Baharatlar'},
+     en:{name:'İçli Köfte',desc:'Classic Mardin dumpling with bulgur shell filled with spiced minced meat.',story:'İçli Köfte has become a symbol of Mardin...',portion:'4 pcs',ingredients:'Bulgur, Minced Meat, Walnut, Spices'},
+     ar:{name:'إيتشلي كوفته',desc:'كرات البرغل التقليدية محشوة باللحم المتبل.',story:'إيتشلي كوفته رمز ماردين العريق...',portion:'٤ قطع',ingredients:'برغل، لحم مفروم، جوز، بهارات'}},
+    {id:'acili_ezme',    cat:'starters', price:140, chef:0, spicy:1, veg:1, allergens:[],
+     tr:{name:'Acılı Ezme',desc:'Taze domates, biber ve baharatlarla hazırlanan acılı sos.',story:'',portion:'1 porsiyon',ingredients:'Domates, Biber, Maydanoz, Limon'},
+     en:{name:'Spicy Ezme',desc:'Fresh tomato and pepper dip with herbs.',story:'',portion:'1 serving',ingredients:'Tomato, Pepper, Parsley, Lemon'},
+     ar:{name:'عجمة حارة',desc:'صلصة الطماطم الطازجة مع الفلفل الحار.',story:'',portion:'١ حصة',ingredients:'طماطم، فلفل، بقدونس، ليمون'}},
+    {id:'humus',         cat:'starters', price:150, chef:0, spicy:0, veg:1, allergens:['sesame'],
+     tr:{name:'Humus',desc:'Tahinli, limonlu nohut püresi, zeytinyağı ve pul biberle servis edilir.',story:'',portion:'1 porsiyon',ingredients:'Nohut, Tahin, Limon, Sarımsak, Zeytinyağı'},
+     en:{name:'Hummus',desc:'Creamy chickpea puree with tahini, lemon, topped with olive oil.',story:'',portion:'1 serving',ingredients:'Chickpeas, Tahini, Lemon, Garlic, Olive Oil'},
+     ar:{name:'حمص',desc:'حمص كريمي بالطحينة والليمون ويُقدم مع زيت الزيتون.',story:'',portion:'١ حصة',ingredients:'حمص، طحينة، ليمون، ثوم، زيت زيتون'}},
+    {id:'patlican',      cat:'starters', price:165, chef:0, spicy:0, veg:1, allergens:[],
+     tr:{name:'Közlenmiş Patlıcan',desc:'Nar ekşisi ve sarımsakla tatlandırılmış közlenmiş patlıcan salatası.',story:'',portion:'1 porsiyon',ingredients:'Patlıcan, Sarımsak, Nar Ekşisi, Zeytinyağı'},
+     en:{name:'Roasted Eggplant',desc:'Chargrilled eggplant salad with pomegranate molasses and garlic.',story:'',portion:'1 serving',ingredients:'Eggplant, Garlic, Pomegranate Molasses, Olive Oil'},
+     ar:{name:'باذنجان مشوي',desc:'سلطة الباذنجان المشوي مع دبس الرمان والثوم.',story:'',portion:'١ حصة',ingredients:'باذنجان، ثوم، دبس رمان، زيت زيتون'}},
+    {id:'mercimek',      cat:'soups', price:120, chef:0, spicy:0, veg:1, allergens:[],
+     tr:{name:'Mercimek Çorbası',desc:'Geleneksel Türk kırmızı mercimek çorbası, nane yağı ile.',story:'',portion:'1 kase',ingredients:'Kırmızı Mercimek, Soğan, Havuç, Nane, Tereyağ'},
+     en:{name:'Red Lentil Soup',desc:'Traditional Turkish red lentil soup with mint butter.',story:'',portion:'1 bowl',ingredients:'Red Lentils, Onion, Carrot, Mint, Butter'},
+     ar:{name:'شوربة العدس',desc:'شوربة العدس الأحمر التقليدية مع زبدة النعنع.',story:'',portion:'١ وعاء',ingredients:'عدس أحمر، بصل، جزر، نعناع، زبدة'}},
+    {id:'yayla',         cat:'soups', price:130, chef:0, spicy:0, veg:1, allergens:['dairy'],
+     tr:{name:'Yayla Çorbası',desc:'Yoğurtlu pirinç çorbası, nane ve tereyağıyla servis edilir.',story:'',portion:'1 kase',ingredients:'Yoğurt, Pirinç, Yumurta, Nane, Tereyağ'},
+     en:{name:'Yayla Çorbası',desc:'Yoghurt and rice soup, served with mint and butter.',story:'',portion:'1 bowl',ingredients:'Yoghurt, Rice, Egg, Mint, Butter'},
+     ar:{name:'يايلا چوربا',desc:'شوربة الزبادي مع الأرز والنعنع.',story:'',portion:'١ وعاء',ingredients:'زبادي، أرز، بيض، نعناع، زبدة'}},
+    {id:'urfa_kebap',    cat:'grill', price:520, chef:0, spicy:1, veg:0, allergens:['gluten'],
+     tr:{name:'Urfa Kebabı',desc:'Orta acı kırmızı biber ile lezzetlendirilmiş ızgara et şiş.',story:'',portion:'2 şiş',ingredients:'Dana Kıyma, Urfa Biberi, Soğan, Maydanoz'},
+     en:{name:'Urfa Kebab',desc:'Grilled minced meat skewers seasoned with mild chilli.',story:'',portion:'2 skewers',ingredients:'Beef Mince, Urfa Pepper, Onion, Parsley'},
+     ar:{name:'كباب أورفا',desc:'كباب اللحم المشوي مع الفلفل الأورفاوي.',story:'',portion:'٢ أسياخ',ingredients:'لحم بقري مفروم، فلفل أورفا، بصل، بقدونس'}},
+    {id:'adana_kebap',   cat:'grill', price:520, chef:0, spicy:1, veg:0, allergens:['gluten'],
+     tr:{name:'Adana Kebabı',desc:'Acı biber ve baharatlarla hazırlanan acılı köfte şiş.',story:'',portion:'2 şiş',ingredients:'Dana Kıyma, Kırmızı Biber, Sarımsak, Baharatlar'},
+     en:{name:'Adana Kebab',desc:'Spicy mince kebab with chilli and aromatic spices.',story:'',portion:'2 skewers',ingredients:'Beef Mince, Red Chilli, Garlic, Spices'},
+     ar:{name:'كباب أضنة',desc:'كباب اللحم الحار مع الفلفل الأحمر الحار.',story:'',portion:'٢ أسياخ',ingredients:'لحم بقري، فلفل أحمر حار، ثوم، بهارات'}},
+    {id:'kuzu_sis',      cat:'grill', price:640, chef:1, spicy:0, veg:0, allergens:[],
+     tr:{name:'Kuzu Şiş',desc:'Taze baharatlarla marine edilmiş kuzu but şiş, közde pişirilir.',story:'Şefimiz her sabah taze kuzu seçer...',portion:'2 şiş',ingredients:'Kuzu But, Zeytinyağı, Kekik, Sarımsak, Baharatlar'},
+     en:{name:'Lamb Shish',desc:'Marinated lamb leg skewers grilled over charcoal.',story:'Our chef selects fresh lamb every morning...',portion:'2 skewers',ingredients:'Lamb Leg, Olive Oil, Thyme, Garlic, Spices'},
+     ar:{name:'شيش الخروف',desc:'أسياخ لحم الخروف المتبل المشوي على الفحم.',story:'يختار شيفنا لحم الخروف الطازج كل صباح...',portion:'٢ أسياخ',ingredients:'لحم خروف، زيت زيتون، زعتر، ثوم، بهارات'}},
+    {id:'beyti',         cat:'grill', price:580, chef:0, spicy:0, veg:0, allergens:['gluten','dairy'],
+     tr:{name:'Beyti Kebabı',desc:'Yufkaya sarılı kıyma kebabı, domates sosu ve yoğurtla.',story:'',portion:'1 porsiyon',ingredients:'Kıyma, Yufka, Domates Sosu, Yoğurt, Tereyağ'},
+     en:{name:'Beyti Kebab',desc:'Minced meat kebab wrapped in lavash with tomato sauce and yoghurt.',story:'',portion:'1 serving',ingredients:'Minced Meat, Lavash, Tomato Sauce, Yoghurt, Butter'},
+     ar:{name:'كباب بيتي',desc:'كباب اللحم ملفوف بالخبز الرقيق مع صلصة الطماطم والزبادي.',story:'',portion:'١ حصة',ingredients:'لحم مفروم، خبز رقاق، صلصة طماطم، زبادي، زبدة'}},
+    {id:'tavuk_sis',     cat:'grill', price:440, chef:0, spicy:0, veg:0, allergens:[],
+     tr:{name:'Tavuk Şiş',desc:'Marine edilmiş tavuk göğsü şiş, közde pişirilir.',story:'',portion:'2 şiş',ingredients:'Tavuk Göğsü, Zeytinyağı, Limon, Baharatlar'},
+     en:{name:'Chicken Shish',desc:'Marinated chicken breast skewers grilled over charcoal.',story:'',portion:'2 skewers',ingredients:'Chicken Breast, Olive Oil, Lemon, Spices'},
+     ar:{name:'شيش الدجاج',desc:'أسياخ صدر الدجاج المتبل المشوي على الفحم.',story:'',portion:'٢ أسياخ',ingredients:'صدر دجاج، زيت زيتون، ليمون، بهارات'}},
+    {id:'karisik_izgara',cat:'grill', price:1280, chef:0, spicy:0, veg:0, allergens:['gluten','dairy'],
+     tr:{name:'Karışık Izgara',desc:'Adana, urfa, kuzu şiş, tavuk şiş ve beyti bir arada.',story:'',portion:'4 kişilik',ingredients:'Çeşitli Etler, Yoğurt, Domates, Biber'},
+     en:{name:'Mixed Grill',desc:'A selection of Adana, Urfa, lamb shish, chicken shish and beyti.',story:'',portion:'Serves 4',ingredients:'Various Meats, Yoghurt, Tomato, Pepper'},
+     ar:{name:'مشاوي مشكلة',desc:'تشكيلة من الكباب وأسياخ الخروف والدجاج.',story:'',portion:'٤ أشخاص',ingredients:'لحوم متنوعة، زبادي، طماطم، فلفل'}},
+    {id:'kaburga_dolmasi',cat:'mardin',price:760, chef:1, spicy:0, veg:0, allergens:['gluten','nuts'],
+     tr:{name:'Kaburga Dolması',desc:'Pirinç, kuru meyve ve baharatlarla doldurulmuş kuzu kaburga, taş fırında 6 saat.',story:'Mardin\'in şah eseri. Kuzu kaburga, iç pilav, bademli dolgu ile taş fırında yavaş yavaş pişirilir. Şefimizin imza yemeği.',portion:'1 porsiyon',ingredients:'Kuzu Kaburga, Pirinç, Badem, Kuru Üzüm, Baharatlar'},
+     en:{name:'Kaburga Dolması',desc:'Stuffed lamb ribs with rice, dried fruits and spices, slow-roasted 6h in stone oven.',story:'The masterpiece of Mardin. Lamb ribs slowly roasted with pilaf, almonds and spices in our stone oven. Our chef\'s signature dish.',portion:'1 serving',ingredients:'Lamb Ribs, Rice, Almonds, Raisins, Spices'},
+     ar:{name:'قبورغة محشية',desc:'ضلوع خروف محشوة بالأرز والفواكه المجففة، مطهية ٦ ساعات في فرن حجري.',story:'تحفة ماردين الفنية. ضلوع خروف تُطهى ببطء مع البلاو واللوز في فرن حجري. طبق شيفنا الخاص.',portion:'١ حصة',ingredients:'ضلوع خروف، أرز، لوز، زبيب، بهارات'}},
+    {id:'eksili_kofte',  cat:'mardin', price:380, chef:0, spicy:0, veg:0, allergens:['gluten','egg'],
+     tr:{name:'Ekşili Köfte',desc:'Nar ekşisi sosuyla servis edilen et topları, Mardin\'e özgü.',story:'',portion:'6 adet',ingredients:'Kıyma, Bulgur, Soğan, Nar Ekşisi, Baharatlar'},
+     en:{name:'Ekşili Köfte',desc:'Meatballs in tangy pomegranate molasses sauce, unique to Mardin.',story:'',portion:'6 pcs',ingredients:'Minced Meat, Bulgur, Onion, Pomegranate Molasses, Spices'},
+     ar:{name:'كوفته حامضة',desc:'كرات اللحم بصلصة دبس الرمان، تخصص ماردين.',story:'',portion:'٦ قطع',ingredients:'لحم مفروم، برغل، بصل، دبس رمان، بهارات'}},
+    {id:'alluciye',      cat:'mardin', price:420, chef:0, spicy:0, veg:0, allergens:[],
+     tr:{name:'Alluciye',desc:'Erik ekşisi ile pişirilmiş geleneksel Mardin et yemeği.',story:'',portion:'1 porsiyon',ingredients:'Dana Eti, Erik Ekşisi, Soğan, Baharatlar'},
+     en:{name:'Alluciye',desc:'Traditional Mardin meat dish cooked with sour plum.',story:'',portion:'1 serving',ingredients:'Beef, Sour Plum, Onion, Spices'},
+     ar:{name:'علوجية',desc:'طبق لحم ماردين التقليدي المطهو مع خوخ حامض.',story:'',portion:'١ حصة',ingredients:'لحم بقري، خوخ حامض، بصل، بهارات'}},
+    {id:'lahmacun',      cat:'oven', price:160, chef:0, spicy:0, veg:0, allergens:['gluten'],
+     tr:{name:'Lahmacun',desc:'İnce hamur üzerine yayılmış baharatlı kıyma, fırında pişirilir.',story:'',portion:'2 adet',ingredients:'Un, Kıyma, Domates, Soğan, Maydanoz, Baharatlar'},
+     en:{name:'Lahmacun',desc:'Thin flatbread topped with spiced minced meat, baked in stone oven.',story:'',portion:'2 pcs',ingredients:'Flour, Minced Meat, Tomato, Onion, Parsley, Spices'},
+     ar:{name:'لحم بالعجين',desc:'عجينة رقيقة مع اللحم المفروم المتبل، مخبوز في فرن حجري.',story:'',portion:'٢ قطع',ingredients:'دقيق، لحم مفروم، طماطم، بصل، بقدونس، بهارات'}},
+    {id:'kusbasili_pide',cat:'oven', price:360, chef:0, spicy:0, veg:0, allergens:['gluten','dairy'],
+     tr:{name:'Kuşbaşılı Pide',desc:'Kaşar peyniri ve dana kuşbaşı ile dolu tekne pide.',story:'',portion:'1 adet',ingredients:'Un, Dana Kuşbaşı, Kaşar Peyniri, Domates, Biber'},
+     en:{name:'Meat Pide',desc:'Boat-shaped flatbread with diced beef and kashkaval cheese.',story:'',portion:'1 pc',ingredients:'Flour, Diced Beef, Kashkaval Cheese, Tomato, Pepper'},
+     ar:{name:'بيدة باللحم',desc:'خبز على شكل قارب مع لحم البقر المكعب وجبن القشقوان.',story:'',portion:'١ قطعة',ingredients:'دقيق، لحم بقري مكعب، جبن قشقوان، طماطم، فلفل'}},
+    {id:'peynirli_pide', cat:'oven', price:290, chef:0, spicy:0, veg:1, allergens:['gluten','dairy'],
+     tr:{name:'Peynirli Pide',desc:'Beyaz peynir ve kaşar karışımıyla dolu tekne pide.',story:'',portion:'1 adet',ingredients:'Un, Beyaz Peynir, Kaşar Peyniri'},
+     en:{name:'Cheese Pide',desc:'Boat-shaped flatbread filled with white cheese and kashkaval.',story:'',portion:'1 pc',ingredients:'Flour, White Cheese, Kashkaval Cheese'},
+     ar:{name:'بيدة بالجبن',desc:'خبز على شكل قارب محشو بالجبن الأبيض وجبن القشقوان.',story:'',portion:'١ قطعة',ingredients:'دقيق، جبن أبيض، جبن قشقوان'}},
+    {id:'kunefe',        cat:'desserts', price:260, chef:0, spicy:0, veg:1, allergens:['gluten','dairy','nuts'],
+     tr:{name:'Künefe',desc:'İnce tel kadayıf arasında peynirle yapılan geleneksel tatlı, şerbetli.',story:'',portion:'1 porsiyon',ingredients:'Tel Kadayıf, Peynir, Şeker, Su, Fıstık'},
+     en:{name:'Künefe',desc:'Traditional shredded wheat dessert with cheese and sugar syrup.',story:'',portion:'1 serving',ingredients:'Shredded Wheat, Cheese, Sugar, Water, Pistachios'},
+     ar:{name:'كنافة',desc:'حلوى الكنافة التقليدية بالجبن والشيرة.',story:'',portion:'١ حصة',ingredients:'عجينة الكنافة، جبن، سكر، ماء، فستق'}},
+    {id:'sutlac',        cat:'desserts', price:140, chef:0, spicy:0, veg:1, allergens:['dairy'],
+     tr:{name:'Fırın Sütlaç',desc:'Fırında karamelize edilmiş yüzeyi olan pirinç sütlacı.',story:'',portion:'1 porsiyon',ingredients:'Pirinç, Süt, Şeker, Vanilya'},
+     en:{name:'Baked Rice Pudding',desc:'Creamy rice pudding with caramelized top, baked in oven.',story:'',portion:'1 serving',ingredients:'Rice, Milk, Sugar, Vanilla'},
+     ar:{name:'أرز باللبن',desc:'حلوى الأرز الكريمية مع قشرة كراميل مخبوزة.',story:'',portion:'١ حصة',ingredients:'أرز، حليب، سكر، فانيليا'}},
+    {id:'asure',         cat:'desserts', price:180, chef:0, spicy:0, veg:1, allergens:['gluten','nuts','dairy'],
+     tr:{name:'Aşure',desc:'Buğday, kurubaklagil, kuru meyve ve kuruyemiş ile hazırlanan geleneksel Türk tatlısı.',story:'',portion:'1 kase',ingredients:'Buğday, Nohut, Fasulye, Kuru Kayısı, Kuru Üzüm, Fındık, Ceviz'},
+     en:{name:'Ashura',desc:'Traditional Turkish Noah\'s pudding with wheat, pulses and dried fruit.',story:'',portion:'1 bowl',ingredients:'Wheat, Chickpeas, Beans, Dried Apricot, Raisins, Hazelnuts, Walnuts'},
+     ar:{name:'عاشوراء',desc:'حلوى القمح التقليدية مع البقوليات والفواكه المجففة.',story:'',portion:'١ وعاء',ingredients:'قمح، حمص، فاصوليا، مشمش مجفف، زبيب، بندق، جوز'}},
+    {id:'baklava',       cat:'desserts', price:220, chef:0, spicy:0, veg:1, allergens:['gluten','nuts','dairy'],
+     tr:{name:'Baklava',desc:'İnce yufka katları arasında antep fıstığı ile fırında pişirilmiş klasik tatlı.',story:'',portion:'4 dilim',ingredients:'Yufka, Antep Fıstığı, Tereyağ, Şeker, Su'},
+     en:{name:'Baklava',desc:'Layered filo pastry with pistachio and sugar syrup.',story:'',portion:'4 slices',ingredients:'Filo Pastry, Pistachios, Butter, Sugar, Water'},
+     ar:{name:'بقلاوة',desc:'حلوى الفيلو مع الفستق الحلبي والشيرة.',story:'',portion:'٤ شرائح',ingredients:'عجينة فيلو، فستق حلبي، زبدة، سكر، ماء'}},
+    {id:'ayran',         cat:'drinks', price:60, chef:0, spicy:0, veg:1, allergens:['dairy'],
+     tr:{name:'Ayran',desc:'Geleneksel yoğurt bazlı serinletici içecek.',story:'',portion:'300ml',ingredients:'Yoğurt, Su, Tuz'},
+     en:{name:'Ayran',desc:'Traditional chilled yoghurt drink.',story:'',portion:'300ml',ingredients:'Yoghurt, Water, Salt'},
+     ar:{name:'عيران',desc:'مشروب الزبادي التقليدي المنعش.',story:'',portion:'٣٠٠ مل',ingredients:'زبادي، ماء، ملح'}},
+    {id:'salgam',        cat:'drinks', price:80, chef:0, spicy:1, veg:1, allergens:[],
+     tr:{name:'Şalgam Suyu',desc:'Acılı fermente turp ve şalgam suyu, Güneydoğu\'nun vazgeçilmezi.',story:'',portion:'330ml',ingredients:'Turp, Şalgam, Bulgur, Tuz'},
+     en:{name:'Şalgam Juice',desc:'Spicy fermented turnip and radish juice, a SE Turkey classic.',story:'',portion:'330ml',ingredients:'Radish, Turnip, Bulgur, Salt'},
+     ar:{name:'عصير الشلغم',desc:'عصير الفجل والشلغم المتبل، مشروب جنوب شرق تركيا.',story:'',portion:'٣٣٠ مل',ingredients:'فجل، شلغم، برغل، ملح'}},
+    {id:'limonata',      cat:'drinks', price:90, chef:0, spicy:0, veg:1, allergens:[],
+     tr:{name:'Limonata',desc:'Taze sıkılmış limon suyu, nane ve şeker ile.',story:'',portion:'400ml',ingredients:'Limon, Su, Şeker, Nane'},
+     en:{name:'Lemonade',desc:'Freshly squeezed lemon juice with mint and sugar.',story:'',portion:'400ml',ingredients:'Lemon, Water, Sugar, Mint'},
+     ar:{name:'ليمونادة',desc:'عصير الليمون الطازج مع النعناع والسكر.',story:'',portion:'٤٠٠ مل',ingredients:'ليمون، ماء، سكر، نعناع'}},
+    {id:'cay',           cat:'drinks', price:40, chef:0, spicy:0, veg:1, allergens:[],
+     tr:{name:'Çay',desc:'Demlik çayı, geleneksel Türk usulü.',story:'',portion:'1 bardak',ingredients:'Çay Yaprağı, Su'},
+     en:{name:'Tea',desc:'Traditional Turkish glass tea, brewed to order.',story:'',portion:'1 glass',ingredients:'Tea Leaves, Water'},
+     ar:{name:'شاي',desc:'شاي تركي تقليدي.',story:'',portion:'١ كأس',ingredients:'أوراق شاي، ماء'}},
+    {id:'turk_kahvesi',  cat:'drinks', price:80, chef:0, spicy:0, veg:1, allergens:[],
+     tr:{name:'Türk Kahvesi',desc:'Geleneksel cezve kahvesi, lokum eşliğinde.',story:'',portion:'1 fincan',ingredients:'Kahve, Su'},
+     en:{name:'Turkish Coffee',desc:'Traditional cezve-brewed coffee, served with lokum.',story:'',portion:'1 cup',ingredients:'Coffee, Water'},
+     ar:{name:'قهوة تركية',desc:'قهوة تركية تقليدية تُقدم مع الراحة.',story:'',portion:'١ فنجان',ingredients:'قهوة، ماء'}}
+  ],
+  allergens: [
+    {id:'gluten', tr:'Gluten (Buğday)', en:'Gluten (Wheat)', ar:'غلوتين (قمح)'},
+    {id:'dairy',  tr:'Süt / Laktoz',    en:'Dairy / Milk',   ar:'ألبان / لاكتوز'},
+    {id:'nuts',   tr:'Kuruyemiş / Fıstık / Ceviz', en:'Tree Nuts', ar:'مكسرات'},
+    {id:'sesame', tr:'Susam / Tahin',   en:'Sesame / Tahini', ar:'سمسم / طحينة'},
+    {id:'egg',    tr:'Yumurta',          en:'Egg',             ar:'بيض'}
+  ],
+  campaign: {
+    active: true,
+    itemId: 'kaburga_dolmasi',
+    badge: {tr:'Günün Tabağı', en:'Dish of the Day', ar:'طبق اليوم'},
+    desc:  {tr:'Taş fırında 6 saat ağır ateşte demlendi', en:'Slow-roasted for 6 hours in our traditional stone oven', ar:'مطهو ببطء في الفرن الحجري لمدة ٦ ساعات كاملة'},
+    btnText:{tr:'İncele', en:'Explore', ar:'استكشف'}
+  },
+  showcase: {
+    morning: {itemIds:['sembusek','mercimek','yayla','icli_kofte']},
+    lunch:   {itemIds:['urfa_kebap','adana_kebap','lahmacun','kuzu_sis']},
+    evening: {itemIds:['kaburga_dolmasi','kuzu_sis','alluciye','kunefe']}
+  },
+  settings: {
+    baseUrl: 'https://mardiva.menu',
+    tableCount: 20,
+    restaurantName: 'Mardiva'
+  },
+  ui: {
+    tr: {menu:'Menü', callWaiter:'Garson Çağır', searchPlaceholder:'Yemek ara...', allDayMenu:'Tüm Gün Menüsü', starters:'Başlangıçlar', mainCourse:'Ana Yemekler', desserts:'Tatlılar', drinks:'İçecekler', spicy:'Acılı', vegetarian:'Vejetaryen', chefRecommendation:'Şefin Önerisi', price:'Fiyat', ingredients:'İçindekiler', allergens:'Alerjenler', portion:'Porsiyon', story:'Hikaye', close:'Kapat', explore:'İncele', dishOfDay:'Günün Tabağı', noResults:'Sonuç bulunamadı', filterBy:'Filtrele', morning:'Sabah', afternoon:'Öğle', evening:'Akşam'},
+    en: {menu:'Menu', callWaiter:'Call Waiter', searchPlaceholder:'Search food...', allDayMenu:'All Day Menu', starters:'Starters', mainCourse:'Main Course', desserts:'Desserts', drinks:'Drinks', spicy:'Spicy', vegetarian:'Vegetarian', chefRecommendation:'Chef\'s Recommendation', price:'Price', ingredients:'Ingredients', allergens:'Allergens', portion:'Portion', story:'Story', close:'Close', explore:'Explore', dishOfDay:'Dish of the Day', noResults:'No results found', filterBy:'Filter by', morning:'Morning', afternoon:'Afternoon', evening:'Evening'},
+    ar: {menu:'القائمة', callWaiter:'استدعِ النادل', searchPlaceholder:'ابحث عن طعام...', allDayMenu:'قائمة طوال اليوم', starters:'المقبلات', mainCourse:'الطبق الرئيسي', desserts:'الحلويات', drinks:'المشروبات', spicy:'حار', vegetarian:'نباتي', chefRecommendation:'اقتراح الشيف', price:'السعر', ingredients:'المكونات', allergens:'مسببات الحساسية', portion:'الحصة', story:'القصة', close:'إغلاق', explore:'استكشف', dishOfDay:'طبق اليوم', noResults:'لا توجد نتائج', filterBy:'تصفية حسب', morning:'صباح', afternoon:'ظهر', evening:'مساء'}
+  }
+};
+
+/* ====================== NAVIGATION ====================== */
+var sectionTitles = {
+  dashboard:  {title:'Dashboard',         sub:'Genel Bakış'},
+  menu:       {title:'Menü Yönetimi',      sub:'Ürün ekle, düzenle ve yönet'},
+  categories: {title:'Kategori Yönetimi', sub:'Kategorileri düzenle ve sırala'},
+  campaign:   {title:'Kampanya Yönetimi', sub:'Günün tabağı ve şerit ayarları'},
+  showcase:   {title:'Vitrin & Zaman',    sub:'Zaman dilimine göre vitrin'},
+  allergens:  {title:'Alerjen Yönetimi', sub:'Alerjen tanımları ve matrisi'},
+  i18n:       {title:'Dil & Çeviri',       sub:'UI metinleri ve çeviriler'},
+  a11y:       {title:'Erişilebilirlik',    sub:'Erişilebilirlik yapılandırması'},
+  qr:         {title:'QR Kod Üretici',     sub:'Masa QR kodları oluştur'},
+  export:     {title:'Dışa / İçe Aktar',   sub:'Yedekle ve geri yükle'}
+};
+
+function gotoSection(id) {
+  document.querySelectorAll('.nav-item').forEach(function(n){
+    n.classList.toggle('active', n.dataset.section===id);
+  });
+  document.querySelectorAll('.section').forEach(function(s){
+    s.classList.toggle('active', s.id==='section-'+id);
+  });
+  var t = sectionTitles[id] || {title:id, sub:''};
+  document.getElementById('header-title').innerHTML = t.title + ' <span>' + t.sub + '</span>';
+}
+
+document.querySelectorAll('.nav-item[data-section]').forEach(function(el){
+  el.addEventListener('click', function(){
+    gotoSection(this.dataset.section);
+  });
+});
+
+/* ====================== TOAST ====================== */
+function showToast(msg, type) {
+  type = type || 'info';
+  var icons = {
+    success:'<path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>',
+    danger:'<circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>',
+    info:'<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>'
+  };
+  var colors = {success:'var(--success)',danger:'var(--danger)',info:'var(--info)'};
+  var t = document.createElement('div');
+  t.className = 'toast ' + type;
+  t.innerHTML = '<svg class="toast-icon" viewBox="0 0 24 24" fill="none" stroke="' + (colors[type]||colors.info) + '" stroke-width="2">' + (icons[type]||icons.info) + '</svg>' + msg;
+  document.getElementById('toast-container').appendChild(t);
+  setTimeout(function(){
+    t.style.animation = 'fadeOut 0.3s ease forwards';
+    setTimeout(function(){t.remove()}, 300);
+  }, 3000);
+}
+
+/* ====================== MENU MANAGEMENT ====================== */
+var editingItemId = null;
+var currentLang = 'tr';
+
+function getCatName(catId, lang) {
+  var c = ADMIN_DATA.categories.find(function(x){return x.id===catId});
+  return c ? c.name[lang||'tr'] : catId;
+}
+
+function renderCatFilter() {
+  var sel = document.getElementById('menu-cat-filter');
+  sel.innerHTML = '<option value="">Tüm Kategoriler</option>';
+  ADMIN_DATA.categories.forEach(function(c){
+    sel.innerHTML += '<option value="'+c.id+'">'+c.name.tr+'</option>';
+  });
+}
+
+function renderItemList() {
+  var catF = document.getElementById('menu-cat-filter').value;
+  var search = (document.getElementById('menu-search').value||'').toLowerCase();
+  var items = ADMIN_DATA.items.filter(function(it){
+    if(catF && it.cat !== catF) return false;
+    if(search && it.tr.name.toLowerCase().indexOf(search)<0) return false;
+    return true;
+  });
+  var html = '';
+  items.forEach(function(it){
+    var isSelected = editingItemId === it.id;
+    html += '<div class="item-entry'+(isSelected?' selected':'')+'" onclick="editItem(\''+it.id+'\')" data-id="'+it.id+'">';
+    html += '<div class="item-entry-info">';
+    html += '<div class="item-entry-name">'+it.tr.name+'</div>';
+    html += '<div class="item-entry-meta">';
+    html += '<span class="badge badge-cat">'+getCatName(it.cat)+'</span>';
+    if(it.chef) html += '<span class="badge badge-chef">★ Şef</span>';
+    if(it.spicy) html += '<span class="badge badge-spicy">🌶 Acılı</span>';
+    if(it.veg) html += '<span class="badge badge-veg">♣ Veg</span>';
+    html += '</div></div>';
+    html += '<div class="item-price">'+it.price+'₺</div>';
+    html += '<div class="item-actions">';
+    html += '<button class="btn-icon btn-sm" onclick="event.stopPropagation();editItem(\''+it.id+'\')" title="Düzenle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>';
+    html += '<button class="btn-icon btn-sm" onclick="event.stopPropagation();deleteItem(\''+it.id+'\')" title="Sil" style="color:var(--danger)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg></button>';
+    html += '</div></div>';
+  });
+  if(!html) html = '<div style="text-align:center;padding:30px;color:var(--text2);font-size:13px">Ürün bulunamadı</div>';
+  document.getElementById('item-list').innerHTML = html;
+}
+
+function slugify(str) {
+  var tr={'ç':'c','ş':'s','ğ':'g','ü':'u','ö':'o','ı':'i','Ç':'c','Ş':'s','Ğ':'g','Ü':'u','Ö':'o','İ':'i'};
+  return str.split('').map(function(c){return tr[c]||c}).join('').toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'');
+}
+
+function buildEditorHTML(item) {
+  item = item || {};
+  var langs = ['tr','en','ar'];
+  var html = '';
+
+  // Basic fields
+  html += '<div class="form-group"><label class="form-label">Ürün ID (Slug)</label>';
+  html += '<input class="form-input" id="ed-id" readonly value="'+(item.id||'')+'" style="color:var(--text2)"></div>';
+
+  html += '<div class="form-row">';
+  html += '<div class="form-group"><label class="form-label">Kategori</label><select class="form-select" id="ed-cat">';
+  ADMIN_DATA.categories.forEach(function(c){
+    html += '<option value="'+c.id+'"'+(item.cat===c.id?' selected':'')+'>'+c.name.tr+'</option>';
+  });
+  html += '</select></div>';
+  html += '<div class="form-group"><label class="form-label">Fiyat (₺)</label>';
+  html += '<div class="input-group"><span class="input-prefix">₺</span>';
+  html += '<input class="form-input" id="ed-price" type="number" value="'+(item.price||0)+'" min="0"></div></div>';
+  html += '</div>';
+
+  html += '<div class="form-group"><label class="form-label">Etiketler</label><div class="checkbox-group">';
+  html += '<label class="checkbox-item"><input type="checkbox" id="ed-chef"'+(item.chef?' checked':'')+'>  Şefin Önerisi</label>';
+  html += '<label class="checkbox-item"><input type="checkbox" id="ed-spicy"'+(item.spicy?' checked':'')+'>  Acılı</label>';
+  html += '<label class="checkbox-item"><input type="checkbox" id="ed-veg"'+(item.veg?' checked':'')+'>  Vejetaryen</label>';
+  html += '</div></div>';
+
+  html += '<div class="form-group"><label class="form-label">Alerjenler</label><div class="checkbox-group">';
+  var algList = item.allergens || [];
+  ADMIN_DATA.allergens.forEach(function(a){
+    html += '<label class="checkbox-item"><input type="checkbox" class="ed-alg" data-id="'+a.id+'"'+(algList.indexOf(a.id)>=0?' checked':'')+'>  '+a.tr+'</label>';
+  });
+  html += '</div></div>';
+
+  html += '<div class="divider"></div>';
+
+  // Trilingual content
+  langs.forEach(function(lng){
+    var ldata = item[lng] || {};
+    var dir = lng==='ar' ? ' dir="rtl"' : '';
+    html += '<div id="ed-lang-'+lng+'" class="ed-lang-block'+(lng==='tr'?' ':'  hidden')+'">';
+    html += '<div class="form-group"><label class="form-label">Ad</label>';
+    html += '<input class="form-input" id="ed-name-'+lng+'" value="'+(ldata.name||'')+'"'+dir+' oninput="'+(lng==='tr'?'autoSlug()':'')+'">';
+    html += '</div>';
+    html += '<div class="form-group"><label class="form-label">Kısa Açıklama</label>';
+    html += '<textarea class="form-textarea" id="ed-desc-'+lng+'"'+dir+'>'+escHtml(ldata.desc||'')+'</textarea></div>';
+    html += '<div class="form-group"><label class="form-label">Hikaye</label>';
+    html += '<textarea class="form-textarea tall" id="ed-story-'+lng+'"'+dir+'>'+escHtml(ldata.story||'')+'</textarea></div>';
+    html += '<div class="form-group"><label class="form-label">Porsiyon Bilgisi</label>';
+    html += '<input class="form-input" id="ed-portion-'+lng+'" value="'+(ldata.portion||'')+'"'+dir+'></div>';
+    html += '<div class="form-group"><label class="form-label">İçindekiler (virgülle ayır)</label>';
+    html += '<textarea class="form-textarea" id="ed-ing-'+lng+'"'+dir+'>'+escHtml(ldata.ingredients||'')+'</textarea></div>';
+    html += '</div>';
+  });
+
+  return html;
+}
+
+function escHtml(str) {
+  return (str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function autoSlug() {
+  var name = document.getElementById('ed-name-tr');
+  var idField = document.getElementById('ed-id');
+  if(name && idField && !editingItemId) {
+    idField.value = slugify(name.value);
+  }
+}
+
+function editItem(id) {
+  editingItemId = id;
+  var item = ADMIN_DATA.items.find(function(x){return x.id===id});
+  if(!item) return;
+  document.getElementById('editor-title').textContent = 'Düzenle: ' + item.tr.name;
+  document.getElementById('editor-body').innerHTML = buildEditorHTML(item);
+  document.getElementById('editor-footer').classList.remove('hidden');
+  currentLang = 'tr';
+  renderItemList();
+  // sync lang tabs
+  document.querySelectorAll('.editor-panel-header .tab').forEach(function(t,i){
+    t.classList.toggle('active', i===0);
+  });
+}
+
+function openNewItem() {
+  editingItemId = null;
+  currentLang = 'tr';
+  document.getElementById('editor-title').textContent = 'Yeni Ürün Ekle';
+  document.getElementById('editor-body').innerHTML = buildEditorHTML(null);
+  document.getElementById('editor-footer').classList.remove('hidden');
+  renderItemList();
+  document.querySelectorAll('.editor-panel-header .tab').forEach(function(t,i){
+    t.classList.toggle('active', i===0);
+  });
+}
+
+function cancelEdit() {
+  editingItemId = null;
+  document.getElementById('editor-title').textContent = 'Ürün Düzenle';
+  document.getElementById('editor-body').innerHTML = '<div class="editor-empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg><p>Bir ürün seçin veya yeni ürün ekleyin</p></div>';
+  document.getElementById('editor-footer').classList.add('hidden');
+  renderItemList();
+}
+
+function switchLangTab(lang, el) {
+  currentLang = lang;
+  document.querySelectorAll('.editor-panel-header .tab').forEach(function(t){t.classList.remove('active')});
+  el.classList.add('active');
+  document.querySelectorAll('.ed-lang-block').forEach(function(b){
+    b.classList.toggle('hidden', b.id!=='ed-lang-'+lang);
+  });
+}
+
+function saveItem() {
+  var nameEl = document.getElementById('ed-name-tr');
+  if(!nameEl || !nameEl.value.trim()){showToast('TR ürün adı gereklidir.','danger');return;}
+
+  var idVal = document.getElementById('ed-id').value || slugify(nameEl.value);
+  var collected = {
+    id: idVal,
+    cat: document.getElementById('ed-cat').value,
+    price: parseInt(document.getElementById('ed-price').value)||0,
+    chef: document.getElementById('ed-chef').checked ? 1 : 0,
+    spicy: document.getElementById('ed-spicy').checked ? 1 : 0,
+    veg: document.getElementById('ed-veg').checked ? 1 : 0,
+    allergens: [],
+    tr:{}, en:{}, ar:{}
+  };
+
+  document.querySelectorAll('.ed-alg:checked').forEach(function(cb){
+    collected.allergens.push(cb.dataset.id);
+  });
+
+  ['tr','en','ar'].forEach(function(lng){
+    collected[lng] = {
+      name: (document.getElementById('ed-name-'+lng)||{}).value||'',
+      desc: (document.getElementById('ed-desc-'+lng)||{}).value||'',
+      story: (document.getElementById('ed-story-'+lng)||{}).value||'',
+      portion: (document.getElementById('ed-portion-'+lng)||{}).value||'',
+      ingredients: (document.getElementById('ed-ing-'+lng)||{}).value||''
+    };
+  });
+
+  if(editingItemId) {
+    var idx = ADMIN_DATA.items.findIndex(function(x){return x.id===editingItemId});
+    if(idx>=0) ADMIN_DATA.items[idx] = collected;
+    showToast('Ürün güncellendi: '+collected.tr.name, 'success');
+  } else {
+    if(ADMIN_DATA.items.find(function(x){return x.id===idVal})){
+      showToast('Bu ID zaten kullanımda!','danger'); return;
+    }
+    ADMIN_DATA.items.push(collected);
+    showToast('Yeni ürün eklendi: '+collected.tr.name, 'success');
+  }
+
+  editingItemId = collected.id;
+  renderItemList();
+  updateStats();
+}
+
+function deleteItem(id) {
+  var item = ADMIN_DATA.items.find(function(x){return x.id===id});
+  if(!item) return;
+  if(!confirm('\"'+item.tr.name+'\" silinsin mi?')) return;
+  ADMIN_DATA.items = ADMIN_DATA.items.filter(function(x){return x.id!==id});
+  if(editingItemId===id) cancelEdit();
+  renderItemList();
+  updateStats();
+  showToast('Ürün silindi: '+item.tr.name, 'danger');
+}
+
+/* ====================== CATEGORIES ====================== */
+function renderCatList() {
+  var html = '';
+  ADMIN_DATA.categories.forEach(function(c, i){
+    html += '<div class="cat-row" data-id="'+c.id+'">';
+    html += '<div class="drag-handle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="9" y1="5" x2="9" y2="19"/><line x1="15" y1="5" x2="15" y2="19"/></svg></div>';
+    html += '<input class="form-input" style="flex:1" value="'+c.name.tr+'" placeholder="TR" onchange="updateCatName(\''+c.id+'\',\'tr\',this.value)">';
+    html += '<input class="form-input" style="flex:1" value="'+c.name.en+'" placeholder="EN" onchange="updateCatName(\''+c.id+'\',\'en\',this.value)">';
+    html += '<input class="form-input" style="flex:1" value="'+c.name.ar+'" placeholder="AR" dir="rtl" onchange="updateCatName(\''+c.id+'\',\'ar\',this.value)">';
+    html += '<div class="table-actions">';
+    html += '<button class="btn-icon" onclick="deleteCat(\''+c.id+'\')" style="color:var(--danger)" title="Sil"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg></button>';
+    html += '</div>';
+    html += '</div>';
+  });
+  document.getElementById('cat-list').innerHTML = html;
+}
+
+function updateCatName(id, lang, val) {
+  var c = ADMIN_DATA.categories.find(function(x){return x.id===id});
+  if(c) c.name[lang] = val;
+}
+
+function deleteCat(id) {
+  var c = ADMIN_DATA.categories.find(function(x){return x.id===id});
+  if(!c) return;
+  if(!confirm('\"'+c.name.tr+'\" kategorisi silinsin mi?')) return;
+  ADMIN_DATA.categories = ADMIN_DATA.categories.filter(function(x){return x.id!==id});
+  renderCatList();
+  renderCatFilter();
+  updateStats();
+  showToast('Kategori silindi.','danger');
+}
+
+function addCategory() {
+  var tr=document.getElementById('new-cat-tr').value.trim();
+  var en=document.getElementById('new-cat-en').value.trim();
+  var ar=document.getElementById('new-cat-ar').value.trim();
+  var id=document.getElementById('new-cat-id').value.trim()||slugify(tr);
+  if(!tr||!id){showToast('TR adı ve ID gereklidir.','danger');return;}
+  if(ADMIN_DATA.categories.find(function(x){return x.id===id})){showToast('Bu ID zaten var!','danger');return;}
+  ADMIN_DATA.categories.push({id:id,name:{tr:tr,en:en||tr,ar:ar||tr}});
+  renderCatList();
+  renderCatFilter();
+  updateStats();
+  ['new-cat-tr','new-cat-en','new-cat-ar','new-cat-id'].forEach(function(fid){document.getElementById(fid).value='';});
+  showToast('Kategori eklendi: '+tr,'success');
+}
+
+/* ====================== CAMPAIGN ====================== */
+function populateCampaignItem() {
+  var sel = document.getElementById('campaign-item');
+  sel.innerHTML = '';
+  ADMIN_DATA.items.forEach(function(it){
+    sel.innerHTML += '<option value="'+it.id+'"'+(it.id===ADMIN_DATA.campaign.itemId?' selected':'')+'>'+it.tr.name+'</option>';
+  });
+}
+
+function switchCampTab(lang, el) {
+  document.querySelectorAll('.camp-lang-tab').forEach(function(t){t.classList.add('hidden')});
+  document.getElementById('camp-'+lang).classList.remove('hidden');
+  el.parentElement.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active')});
+  el.classList.add('active');
+}
+
+function updateCampaignPreview() {
+  var badge = document.getElementById('camp-badge-tr').value;
+  var desc = document.getElementById('camp-desc-tr').value;
+  var btn = document.getElementById('camp-btn-tr').value;
+  var itemSel = document.getElementById('campaign-item');
+  var itemName = itemSel.options[itemSel.selectedIndex] ? itemSel.options[itemSel.selectedIndex].text : '';
+  document.getElementById('cp-badge').textContent = badge;
+  document.getElementById('cp-title').textContent = itemName;
+  document.getElementById('cp-desc').textContent = desc;
+  document.getElementById('cp-btn').innerHTML = btn + ' <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>';
+  var active = document.getElementById('campaign-active').checked;
+  document.getElementById('campaign-preview').style.opacity = active ? '1' : '0.4';
+}
+
+function saveCampaign() {
+  ADMIN_DATA.campaign.active = document.getElementById('campaign-active').checked;
+  ADMIN_DATA.campaign.itemId = document.getElementById('campaign-item').value;
+  ADMIN_DATA.campaign.badge.tr = document.getElementById('camp-badge-tr').value;
+  ADMIN_DATA.campaign.badge.en = document.getElementById('camp-badge-en').value;
+  ADMIN_DATA.campaign.badge.ar = document.getElementById('camp-badge-ar').value;
+  ADMIN_DATA.campaign.desc.tr = document.getElementById('camp-desc-tr').value;
+  ADMIN_DATA.campaign.desc.en = document.getElementById('camp-desc-en').value;
+  ADMIN_DATA.campaign.desc.ar = document.getElementById('camp-desc-ar').value;
+  ADMIN_DATA.campaign.btnText.tr = document.getElementById('camp-btn-tr').value;
+  ADMIN_DATA.campaign.btnText.en = document.getElementById('camp-btn-en').value;
+  ADMIN_DATA.campaign.btnText.ar = document.getElementById('camp-btn-ar').value;
+  showToast('Kampanya kaydedildi.','success');
+}
+
+/* ====================== SHOWCASE ====================== */
+var showcasePeriods = [
+  {id:'morning', icon:'🌅', label:'Sabah / Morning', range:'06:00 – 11:59'},
+  {id:'lunch',   icon:'☀️', label:'Öğle / Lunch',   range:'12:00 – 17:59'},
+  {id:'evening', icon:'🌙', label:'Akşam / Evening', range:'18:00 – 23:59'}
+];
+
+function renderShowcase() {
+  var html = '';
+  showcasePeriods.forEach(function(p){
+    var selected = ADMIN_DATA.showcase[p.id].itemIds;
+    html += '<div class="time-block">';
+    html += '<div class="time-block-header"><span><span class="time-icon">'+p.icon+'</span>'+p.label+'</span><span class="badge" style="background:rgba(201,169,110,0.1);color:var(--accent)">'+p.range+'</span></div>';
+    html += '<div class="time-block-body">';
+    html += '<div class="form-label mb-8">Bu zaman dilimine ait ürünler:</div>';
+    html += '<div class="time-items-grid">';
+    ADMIN_DATA.items.forEach(function(it){
+      var checked = selected.indexOf(it.id)>=0 ? ' checked' : '';
+      html += '<label class="time-item-check"><input type="checkbox" data-period="'+p.id+'" data-item="'+it.id+'"'+checked+'> '+it.tr.name+'</label>';
+    });
+    html += '</div></div></div>';
+  });
+  document.getElementById('showcase-blocks').innerHTML = html;
+}
+
+function saveShowcase() {
+  showcasePeriods.forEach(function(p){
+    var ids = [];
+    document.querySelectorAll('[data-period="'+p.id+'"]:checked').forEach(function(cb){ids.push(cb.dataset.item)});
+    ADMIN_DATA.showcase[p.id].itemIds = ids;
+  });
+  showToast('Vitrin ayarları kaydedildi.','success');
+}
+
+/* ====================== LIVE CLOCK ====================== */
+function updateClock() {
+  var now = new Date();
+  var h = String(now.getHours()).padStart(2,'0');
+  var m = String(now.getMinutes()).padStart(2,'0');
+  var s = String(now.getSeconds()).padStart(2,'0');
+  var el = document.getElementById('live-clock');
+  var lbl = document.getElementById('period-label');
+  if(el) el.textContent = h+':'+m+':'+s;
+  if(lbl){
+    var hr = now.getHours();
+    var period = hr<12 ? '🌅 Sabah' : hr<18 ? '☀️ Öğle' : '🌙 Akşam';
+    lbl.textContent = 'Aktif dönem: ' + period;
+  }
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+/* ====================== ALLERGENS ====================== */
+function renderAllergenDefs() {
+  var tbody = document.querySelector('#allergen-def-table tbody');
+  tbody.innerHTML = '';
+  ADMIN_DATA.allergens.forEach(function(a){
+    var tr = document.createElement('tr');
+    tr.innerHTML = '<td><code style="color:var(--accent);font-size:11px">'+a.id+'</code></td>' +
+      '<td><input class="form-input" value="'+a.tr+'" onchange="updateAllergen(\''+a.id+'\',\'tr\',this.value)" style="padding:6px 10px;font-size:12px"></td>' +
+      '<td><input class="form-input" value="'+a.en+'" onchange="updateAllergen(\''+a.id+'\',\'en\',this.value)" style="padding:6px 10px;font-size:12px"></td>' +
+      '<td><input class="form-input" value="'+a.ar+'" onchange="updateAllergen(\''+a.id+'\',\'ar\',this.value)" style="padding:6px 10px;font-size:12px" dir="rtl"></td>' +
+      '<td><button class="btn btn-danger btn-sm" onclick="deleteAllergen(\''+a.id+'\')">Sil</button></td>';
+    tbody.appendChild(tr);
+  });
+}
+
+function updateAllergen(id, lang, val) {
+  var a = ADMIN_DATA.allergens.find(function(x){return x.id===id});
+  if(a) a[lang] = val;
+}
+
+function deleteAllergen(id) {
+  if(!confirm('Alerjen silinsin mi?')) return;
+  ADMIN_DATA.allergens = ADMIN_DATA.allergens.filter(function(x){return x.id!==id});
+  renderAllergenDefs();
+  renderAllergenMatrix();
+  showToast('Alerjen silindi.','danger');
+}
+
+function addAllergen() {
+  var id=document.getElementById('new-alg-id').value.trim();
+  var tr=document.getElementById('new-alg-tr').value.trim();
+  var en=document.getElementById('new-alg-en').value.trim();
+  var ar=document.getElementById('new-alg-ar').value.trim();
+  if(!id||!tr){showToast('ID ve TR adı gereklidir.','danger');return;}
+  if(ADMIN_DATA.allergens.find(function(x){return x.id===id})){showToast('Bu ID zaten var!','danger');return;}
+  ADMIN_DATA.allergens.push({id:id,tr:tr,en:en||tr,ar:ar||tr});
+  renderAllergenDefs();
+  renderAllergenMatrix();
+  ['new-alg-id','new-alg-tr','new-alg-en','new-alg-ar'].forEach(function(f){document.getElementById(f).value='';});
+  showToast('Alerjen eklendi.','success');
+}
+
+function renderAllergenMatrix() {
+  var tbl = document.getElementById('allergen-matrix');
+  var hdr = '<thead><tr><th class="sticky-col">Ürün</th>';
+  ADMIN_DATA.allergens.forEach(function(a){hdr+='<th>'+a.tr+'</th>';});
+  hdr += '</tr></thead>';
+  var body = '<tbody>';
+  ADMIN_DATA.items.forEach(function(it){
+    body += '<tr><td class="sticky-col">'+it.tr.name+'</td>';
+    ADMIN_DATA.allergens.forEach(function(a){
+      var chk = it.allergens && it.allergens.indexOf(a.id)>=0;
+      body += '<td style="text-align:center"><input type="checkbox"'+(chk?' checked':'')+' onchange="toggleAllergen(\''+it.id+'\',\''+a.id+'\',this.checked)"></td>';
+    });
+    body += '</tr>';
+  });
+  body += '</tbody>';
+  tbl.innerHTML = hdr + body;
+}
+
+function toggleAllergen(itemId, algId, val) {
+  var item = ADMIN_DATA.items.find(function(x){return x.id===itemId});
+  if(!item) return;
+  if(!item.allergens) item.allergens=[];
+  if(val){if(item.allergens.indexOf(algId)<0) item.allergens.push(algId);}
+  else item.allergens = item.allergens.filter(function(x){return x!==algId});
+}
+
+/* ====================== I18N ====================== */
+var uiKeys = {
+  menu:'Menü',callWaiter:'Garson Çağır',searchPlaceholder:'Arama metni',
+  allDayMenu:'Tüm Gün Menüsü',starters:'Başlangıçlar',mainCourse:'Ana Yemekler',
+  desserts:'Tatlılar',drinks:'İçecekler',spicy:'Acılı',vegetarian:'Vejetaryen',
+  chefRecommendation:'Şefin Önerisi',price:'Fiyat',ingredients:'İçindekiler',
+  allergens:'Alerjenler',portion:'Porsiyon',story:'Hikaye',close:'Kapat',
+  explore:'İncele',dishOfDay:'Günün Tabağı',noResults:'Sonuç yok',
+  filterBy:'Filtrele',morning:'Sabah',afternoon:'Öğle',evening:'Akşam'
+};
+
+function renderI18n() {
+  ['tr','en','ar'].forEach(function(lng){
+    var container = document.getElementById('i18n-'+lng);
+    container.innerHTML = '';
+    Object.keys(uiKeys).forEach(function(key){
+      var val = (ADMIN_DATA.ui[lng]||{})[key]||'';
+      var trVal = (ADMIN_DATA.ui.tr||{})[key]||'';
+      var row = document.createElement('div');
+      row.className = 'i18n-row';
+      var dir = lng==='ar' ? ' dir="rtl"' : '';
+      row.innerHTML = '<span class="i18n-key">'+key+'</span>' +
+        '<input class="form-input" value="'+escHtml(val)+'" data-lang="'+lng+'" data-key="'+key+'"'+dir+' style="padding:7px 12px;font-size:13px" onchange="updateI18n(\''+lng+'\',\''+key+'\',this.value)">' +
+        (lng!=='tr' ? '<span class="i18n-ref">'+escHtml(trVal)+'</span>' : '<span></span>');
+      container.appendChild(row);
+    });
+  });
+}
+
+function updateI18n(lng, key, val) {
+  if(!ADMIN_DATA.ui[lng]) ADMIN_DATA.ui[lng]={};
+  ADMIN_DATA.ui[lng][key] = val;
+}
+
+function switchI18nTab(lang, el) {
+  document.querySelectorAll('.i18n-lang').forEach(function(t){t.classList.add('hidden')});
+  document.getElementById('i18n-'+lang).classList.remove('hidden');
+  el.parentElement.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active')});
+  el.classList.add('active');
+}
+
+function saveI18n() {
+  document.querySelectorAll('[data-lang][data-key]').forEach(function(inp){
+    var lng=inp.dataset.lang, key=inp.dataset.key;
+    if(!ADMIN_DATA.ui[lng]) ADMIN_DATA.ui[lng]={};
+    ADMIN_DATA.ui[lng][key]=inp.value;
+  });
+  showToast('Dil verileri kaydedildi.','success');
+}
+
+/* ====================== A11Y ====================== */
+function updateFontPreview() {
+  var slider = document.getElementById('font-size-slider');
+  var label = document.getElementById('font-size-label');
+  var preview = document.getElementById('font-preview');
+  var large = document.getElementById('a11y-large-text').checked;
+  var base = parseInt(slider.value);
+  var final = large ? base + 2 : base;
+  label.textContent = final + 'px';
+  preview.style.setProperty('--preview-size', final + 'px');
+  preview.querySelectorAll('[style*="var(--preview-size"]').forEach(function(el){
+    el.style.fontSize = final + 'px';
+  });
+}
+
+function saveA11y() {
+  showToast('Erişilebilirlik ayarları kaydedildi.','success');
+}
+
+/* ====================== QR GENERATOR ====================== */
+function makeQRSvg(tableNum, fg, bg, size) {
+  fg = fg || '#c9a96e';
+  bg = bg || '#1a1b1e';
+  size = size || 120;
+  // Generate a deterministic pseudo-QR pattern based on table number
+  var cells = 21;
+  var cellSize = size / cells;
+  var svg = '<svg width="'+size+'" height="'+size+'" viewBox="0 0 '+size+' '+size+'" xmlns="http://www.w3.org/2000/svg">';
+  svg += '<rect width="'+size+'" height="'+size+'" fill="'+bg+'"/>';
+
+  // Seeded random using table number
+  var seed = tableNum * 9301 + 49297;
+  function rand() { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; }
+
+  for(var r=0;r<cells;r++){
+    for(var c=0;c<cells;c++){
+      // Finder patterns (top-left, top-right, bottom-left)
+      var inFinder = false;
+      if((r<7&&c<7)||(r<7&&c>=cells-7)||(r>=cells-7&&c<7)) inFinder=true;
+      var dark = inFinder ? isFinderDark(r,c,cells) : (rand()>0.5);
+      if(dark){
+        svg += '<rect x="'+(c*cellSize)+'" y="'+(r*cellSize)+'" width="'+cellSize+'" height="'+cellSize+'" fill="'+fg+'"/>';
+      }
+    }
+  }
+  // Logo overlay
+  var logoSize = size * 0.22;
+  var logoX = (size-logoSize)/2;
+  var logoY = (size-logoSize)/2;
+  svg += '<rect x="'+logoX+'" y="'+logoY+'" width="'+logoSize+'" height="'+logoSize+'" rx="'+(logoSize*0.2)+'" fill="'+bg+'"/>';
+  svg += '<text x="'+(size/2)+'" y="'+(size/2+logoSize*0.15)+'" text-anchor="middle" font-size="'+(logoSize*0.55)+'" font-weight="bold" fill="'+fg+'" font-family="Arial">M</text>';
+  svg += '</svg>';
+  return svg;
+}
+
+function isFinderDark(r, c, cells) {
+  // Top-left
+  if(r<7&&c<7){
+    if(r===0||r===6||c===0||c===6) return true;
+    if(r>=2&&r<=4&&c>=2&&c<=4) return true;
+    return false;
+  }
+  // Top-right
+  if(r<7&&c>=cells-7){
+    var lc=c-(cells-7);
+    if(r===0||r===6||lc===0||lc===6) return true;
+    if(r>=2&&r<=4&&lc>=2&&lc<=4) return true;
+    return false;
+  }
+  // Bottom-left
+  if(r>=cells-7&&c<7){
+    var lr=r-(cells-7);
+    if(lr===0||lr===6||c===0||c===6) return true;
+    if(lr>=2&&lr<=4&&c>=2&&c<=4) return true;
+    return false;
+  }
+  return false;
+}
+
+function generateQRGrid() {
+  var baseUrl = document.getElementById('qr-base-url').value.trim() || 'https://mardiva.menu';
+  var count = parseInt(document.getElementById('qr-table-count').value)||20;
+  var fg = document.getElementById('qr-fg').value;
+  var bg = document.getElementById('qr-bg').value;
+  var sizeVal = document.querySelector('input[name="qr-size"]:checked').value;
+  var size = parseInt(sizeVal)||120;
+
+  document.getElementById('qr-count-label').textContent = count + ' masa';
+  var grid = document.getElementById('qr-grid');
+  grid.innerHTML = '';
+
+  for(var i=1;i<=count;i++){
+    (function(n){
+      var url = baseUrl + '?masa=' + n;
+      var card = document.createElement('div');
+      card.className = 'qr-card';
+      card.innerHTML = makeQRSvg(n, fg, bg, size) +
+        '<div class="qr-label">Masa '+n+'</div>' +
+        '<div class="qr-url">?masa='+n+'</div>' +
+        '<div class="qr-card-actions">' +
+          '<button class="btn btn-ghost btn-sm" onclick="copyLink(\''+url+'\')">Kopyala</button>' +
+          '<button class="btn btn-ghost btn-sm" onclick="downloadQR('+n+')">SVG</button>' +
+        '</div>';
+      grid.appendChild(card);
+    })(i);
+  }
+
+  // Update sample
+  document.getElementById('qr-sample-svg').outerHTML = makeQRSvg(1, fg, bg, 180);
+  showToast(count+' QR kodu oluşturuldu.','success');
+}
+
+function copyLink(url) {
+  if(navigator.clipboard){navigator.clipboard.writeText(url);}
+  else{var t=document.createElement('textarea');t.value=url;document.body.appendChild(t);t.select();document.execCommand('copy');t.remove();}
+  showToast('Bağlantı kopyalandı!','info');
+}
+
+function downloadQR(n) {
+  showToast('Masa '+n+' QR kodu indirildi.','info');
+}
+
+/* ====================== EXPORT ====================== */
+function exportJSON() {
+  var json = JSON.stringify(ADMIN_DATA, null, 2);
+  var blob = new Blob([json], {type:'application/json'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'mardiva-menu-' + new Date().toISOString().slice(0,10) + '.json';
+  a.click();
+  showToast('JSON dışa aktarıldı.','success');
+}
+
+function createBackup() {
+  var now = new Date();
+  var dateStr = now.toISOString().slice(0,10);
+  var timeStr = now.toTimeString().slice(0,5);
+  var li = document.createElement('div');
+  li.className = 'backup-item';
+  li.innerHTML = '<div class="backup-info"><div class="backup-name">mardiva-backup-'+dateStr+'.json</div><div class="backup-meta">'+dateStr+' · '+timeStr+' · ~41 KB</div></div><div class="table-actions"><button class="btn btn-ghost btn-sm" onclick="showToast(\'Yedek geri yüklendi.\',\'success\')">Geri Yükle</button><button class="btn btn-danger btn-sm" onclick="this.closest(\'.backup-item\').remove();showToast(\'Yedek silindi.\',\'danger\')">Sil</button></div>';
+  document.getElementById('backup-list').prepend(li);
+  showToast('Yedek oluşturuldu.','success');
+}
+
+var importData = null;
+function previewImport(input) {
+  var f = input.files[0];
+  if(!f) return;
+  var reader = new FileReader();
+  reader.onload = function(e){
+    try{
+      importData = JSON.parse(e.target.result);
+      var items = (importData.items||[]).length;
+      var cats = (importData.categories||[]).length;
+      document.getElementById('import-preview-text').textContent = 'Hazır: '+items+' ürün, '+cats+' kategori bulundu.';
+      document.getElementById('import-preview').classList.remove('hidden');
+    } catch(err){
+      showToast('Geçersiz JSON dosyası.','danger');
+    }
+  };
+  reader.readAsText(f);
+}
+
+function confirmImport() {
+  if(!importData){showToast('Önce dosya yükleyin.','danger');return;}
+  if(!confirm('Mevcut veriler üzerine yazılacak. Devam edilsin mi?')) return;
+  if(importData.items) ADMIN_DATA.items = importData.items;
+  if(importData.categories) ADMIN_DATA.categories = importData.categories;
+  if(importData.allergens) ADMIN_DATA.allergens = importData.allergens;
+  renderItemList();
+  renderCatList();
+  renderCatFilter();
+  renderAllergenDefs();
+  renderAllergenMatrix();
+  updateStats();
+  document.getElementById('import-preview').classList.add('hidden');
+  showToast('Veriler içe aktarıldı.','success');
+}
+
+/* ====================== STATS ====================== */
+function updateStats() {
+  var itemEl = document.getElementById('stat-items');
+  var catEl = document.getElementById('stat-cats');
+  if(itemEl) itemEl.textContent = ADMIN_DATA.items.length;
+  if(catEl) catEl.textContent = ADMIN_DATA.categories.length;
+  renderCatDist();
+}
+
+function renderCatDist() {
+  var grid = document.getElementById('cat-dist-grid');
+  if(!grid) return;
+  var html = '';
+  ADMIN_DATA.categories.forEach(function(c){
+    var count = ADMIN_DATA.items.filter(function(it){return it.cat===c.id}).length;
+    html += '<div style="text-align:center">';
+    html += '<div style="font-size:22px;font-weight:700;color:var(--accent)">'+count+'</div>';
+    html += '<div style="font-size:11px;color:var(--text2);margin-top:2px">'+c.name.tr+'</div>';
+    html += '</div>';
+  });
+  grid.innerHTML = html;
+}
+
+/* ====================== INIT ====================== */
+function init() {
+  renderCatFilter();
+  renderItemList();
+  renderCatList();
+  populateCampaignItem();
+  updateCampaignPreview();
+  renderShowcase();
+  renderAllergenDefs();
+  renderAllergenMatrix();
+  renderI18n();
+  generateQRGrid();
+  updateStats();
+
+  // Set campaign dates
+  var today = new Date();
+  var todayStr = today.toISOString().slice(0,10);
+  var endDate = new Date(today); endDate.setDate(endDate.getDate()+7);
+  var endStr = endDate.toISOString().slice(0,10);
+  document.getElementById('camp-start').value = todayStr;
+  document.getElementById('camp-end').value = endStr;
+}
+
+init();
+</script>
+</body>
+</html>
