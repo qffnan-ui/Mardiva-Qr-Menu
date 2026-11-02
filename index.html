@@ -2790,23 +2790,22 @@ footer p{
 
   /* ==========================================================================
      4b. ADMIN PANELİNDEN GELEN VERİLERLE MENU'YÜ OVERRIDE ET
-     Admin panelinde "Kaydet & Yayınla" yapıldığında localStorage'e kaydedilen
-     ADMIN_DATA kullanılarak MENU ve TIME_PRESETS güncellenir.
+     Admin panelinde kaydedilen ADMIN_DATA kullanılarak MENU, TIME_PRESETS
+     ve Kampanya bilgileri kusursuz şekilde güncellenir.
      ========================================================================== */
-  (function applyAdminData() {
+  var ADMIN_CAMPAIGN_DATA = null;
+
+  function applyAdminData() {
     try {
       var raw = localStorage.getItem('mardiva_admin_data');
       if (!raw) return;
       var ad = JSON.parse(raw);
       if (!ad || !ad.items || !ad.categories) return;
 
-      // Admin items → MENU format dönüşümü
-      var catMap = {};
-      ad.categories.forEach(function(c) { catMap[c.id] = c; });
-
       // Kategorilere göre items'ı grupla
       var catItems = {};
       ad.items.forEach(function(it) {
+        if (!it || !it.cat) return;
         if (!catItems[it.cat]) catItems[it.cat] = [];
         catItems[it.cat].push(it);
       });
@@ -2814,44 +2813,56 @@ footer p{
       // Yeni MENU array'i oluştur
       var newMenu = [];
       ad.categories.forEach(function(cat) {
+        if (!cat || !cat.id) return;
         var items = catItems[cat.id] || [];
-        if (items.length === 0) return; // Boş kategorileri atla
+        if (items.length === 0) return; // Boş kategorileri menüde gösterme
+
+        var cTr = (cat.name && cat.name.tr) || cat.id;
+        var cEn = (cat.name && cat.name.en) || cTr;
+        var cAr = (cat.name && cat.name.ar) || cTr;
 
         var menuCat = {
           id: cat.id,
-          tr: [cat.name.tr || cat.id, ''],
-          en: [cat.name.en || cat.name.tr || cat.id, ''],
-          ar: [cat.name.ar || cat.name.tr || cat.id, ''],
+          name: { tr: cTr, en: cEn, ar: cAr },
+          tr: [cTr, ''],
+          en: [cEn, ''],
+          ar: [cAr, ''],
           items: items.map(function(it) {
-            // tags hesapla
             var tags = [];
             if (it.spicy) tags.push('spicy');
             if (it.veg) tags.push('veg');
             if (it.chef) tags.push('chef');
 
+            var trName = (it.tr && it.tr.name) || it.id;
+            var trDesc = (it.tr && it.tr.desc) || '';
+            var enName = (it.en && it.en.name) || trName;
+            var enDesc = (it.en && it.en.desc) || trDesc;
+            var arName = (it.ar && it.ar.name) || trName;
+            var arDesc = (it.ar && it.ar.desc) || trDesc;
+
             return {
               id: it.id,
-              p: it.price || 0,
+              p: Number(it.price) || 0,
               chef: it.chef ? 1 : 0,
               tags: tags,
-              allergens: it.allergens || [],
-              tr: [it.tr.name || '', it.tr.desc || ''],
-              en: [it.en.name || '', it.en.desc || ''],
-              ar: [it.ar.name || '', it.ar.desc || ''],
+              allergens: Array.isArray(it.allergens) ? it.allergens : [],
+              tr: [trName, trDesc],
+              en: [enName, enDesc],
+              ar: [arName, arDesc],
               portion: {
-                tr: it.tr.portion || '',
-                en: it.en.portion || '',
-                ar: it.ar.portion || ''
+                tr: (it.tr && it.tr.portion) || '',
+                en: (it.en && it.en.portion) || '',
+                ar: (it.ar && it.ar.portion) || ''
               },
               ingredients: {
-                tr: it.tr.ingredients || '',
-                en: it.en.ingredients || '',
-                ar: it.ar.ingredients || ''
+                tr: (it.tr && it.tr.ingredients) || '',
+                en: (it.en && it.en.ingredients) || '',
+                ar: (it.ar && it.ar.ingredients) || ''
               },
               story: {
-                tr: it.tr.story || '',
-                en: it.en.story || '',
-                ar: it.ar.story || ''
+                tr: (it.tr && it.tr.story) || '',
+                en: (it.en && it.en.story) || '',
+                ar: (it.ar && it.ar.story) || ''
               }
             };
           })
@@ -2862,11 +2873,27 @@ footer p{
       if (newMenu.length > 0) {
         MENU = newMenu;
       }
+
+      // Vitrin zaman dilimleri senkronizasyonu
+      if (ad.showcase && typeof TIME_PRESETS !== 'undefined') {
+        ['morning', 'lunch', 'evening'].forEach(function(period) {
+          if (ad.showcase[period] && Array.isArray(ad.showcase[period].itemIds) && TIME_PRESETS[period]) {
+            TIME_PRESETS[period].itemIds = ad.showcase[period].itemIds;
+          }
+        });
+      }
+
+      // Kampanya verisini sakla
+      if (ad.campaign) {
+        ADMIN_CAMPAIGN_DATA = ad.campaign;
+      }
     } catch(e) {
-      // localStorage verisi hatalıysa orijinal MENU'yü koru
-      console.warn('Admin verisi yüklenemedi:', e);
+      console.warn('Admin verisi uygulanamadı:', e);
     }
-  })();
+  }
+
+  // İlk yüklemede çalıştır
+  applyAdminData();
 
   /* ==========================================================================
      5. TIME-BASED RECOMMENDATION PRESETS
@@ -2893,6 +2920,9 @@ footer p{
       itemIds: ["mirra", "turk_kahvesi", "baklava", "kunefe"]
     }
   };
+
+  // TIME_PRESETS tanımlandıktan sonra admin showcase verisini senkronize et
+  applyAdminData();
 
   /* ==========================================================================
      6. APPLICATION STATE
@@ -3056,16 +3086,37 @@ footer p{
     }
 
     var rBadge = document.getElementById('ribbonBadge');
-    if (rBadge) rBadge.textContent = t.todaySpecialBadge;
     var rDesc = document.getElementById('ribbonDesc');
-    if (rDesc) rDesc.textContent = t.todaySpecialDesc;
     var rAction = document.getElementById('btnRibbonAction');
-    if (rAction) {
-      rAction.innerHTML = '<span>' + esc(t.exploreBtn) + '</span> ' + ICONS.arrow;
-    }
     var rTitle = document.getElementById('ribbonTitle');
-    var specialRes = findItemById('kaburga_dolmasi');
-    if (rTitle && specialRes) rTitle.textContent = specialRes.item[state.lang][0];
+    var ribbonCard = document.querySelector('.hero-ribbon');
+
+    if (ADMIN_CAMPAIGN_DATA && ADMIN_CAMPAIGN_DATA.active === false) {
+      if (ribbonCard) ribbonCard.style.display = 'none';
+    } else {
+      if (ribbonCard) ribbonCard.style.display = '';
+      var campItemId = (ADMIN_CAMPAIGN_DATA && ADMIN_CAMPAIGN_DATA.itemId) || 'kaburga_dolmasi';
+      var specialRes = findItemById(campItemId);
+      if (!specialRes && MENU.length && MENU[0].items.length) {
+        specialRes = { cat: MENU[0], item: MENU[0].items[0] };
+      }
+
+      if (rBadge) {
+        var bTxt = (ADMIN_CAMPAIGN_DATA && ADMIN_CAMPAIGN_DATA.badge && ADMIN_CAMPAIGN_DATA.badge[state.lang]) || t.todaySpecialBadge;
+        rBadge.textContent = bTxt;
+      }
+      if (rDesc) {
+        var dTxt = (ADMIN_CAMPAIGN_DATA && ADMIN_CAMPAIGN_DATA.desc && ADMIN_CAMPAIGN_DATA.desc[state.lang]) || t.todaySpecialDesc;
+        rDesc.textContent = dTxt;
+      }
+      if (rAction) {
+        var aTxt = (ADMIN_CAMPAIGN_DATA && ADMIN_CAMPAIGN_DATA.btnText && ADMIN_CAMPAIGN_DATA.btnText[state.lang]) || t.exploreBtn;
+        rAction.innerHTML = '<span>' + esc(aTxt) + '</span> ' + ICONS.arrow;
+      }
+      if (rTitle && specialRes) {
+        rTitle.textContent = specialRes.item[state.lang][0];
+      }
+    }
 
     var searchInput = document.getElementById('searchInput');
     if (searchInput) searchInput.placeholder = t.searchPlaceholder;
@@ -3610,7 +3661,12 @@ footer p{
     var btnRibbon = document.getElementById('btnRibbonAction');
     if (btnRibbon) {
       btnRibbon.addEventListener('click', function(){
-        openDetailDrawer('kaburga_dolmasi');
+        var campItemId = (ADMIN_CAMPAIGN_DATA && ADMIN_CAMPAIGN_DATA.itemId) || 'kaburga_dolmasi';
+        if (findItemById(campItemId)) {
+          openDetailDrawer(campItemId);
+        } else if (MENU.length && MENU[0].items.length) {
+          openDetailDrawer(MENU[0].items[0].id);
+        }
       });
     }
 
@@ -3831,6 +3887,14 @@ footer p{
         }
       }, { passive: true });
     }
+
+    // Admin panelinden yapılan değişiklikleri (ekleme, silme, güncelleme) anında sayfayı yenilemeden yansıt
+    window.addEventListener('storage', function(e){
+      if (e.key === 'mardiva_admin_data') {
+        applyAdminData();
+        render();
+      }
+    });
   }
 
   /* ==========================================================================

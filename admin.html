@@ -1170,6 +1170,10 @@ table.matrix-table input[type=checkbox]{accent-color:var(--accent);width:16px;he
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
             Yedek Oluştur
           </button>
+          <button class="btn btn-danger" onclick="resetToDefaults()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>
+            Varsayılan Menüyü Geri Yükle (Sıfırla)
+          </button>
         </div>
       </div>
     </div>
@@ -1398,6 +1402,9 @@ var ADMIN_DATA = {
   }
 };
 
+// Orijinal varsayılan verilerin derin kopyasını sakla (sıfırlama gerektiğinde kullanılmak üzere)
+var ADMIN_DEFAULT_DATA = JSON.parse(JSON.stringify(ADMIN_DATA));
+
 /* ====================== NAVIGATION ====================== */
 var sectionTitles = {
   dashboard:  {title:'Dashboard',         sub:'Genel Bakış'},
@@ -1466,19 +1473,23 @@ function renderCatFilter() {
 }
 
 function renderItemList() {
-  var catF = document.getElementById('menu-cat-filter').value;
-  var search = (document.getElementById('menu-search').value||'').toLowerCase();
+  var catFilterEl = document.getElementById('menu-cat-filter');
+  var catF = catFilterEl ? catFilterEl.value : '';
+  var searchEl = document.getElementById('menu-search');
+  var search = (searchEl ? searchEl.value : '').toLowerCase().trim();
   var items = ADMIN_DATA.items.filter(function(it){
     if(catF && it.cat !== catF) return false;
-    if(search && it.tr.name.toLowerCase().indexOf(search)<0) return false;
+    var trName = (it.tr && it.tr.name) ? it.tr.name.toLowerCase() : '';
+    if(search && trName.indexOf(search)<0) return false;
     return true;
   });
   var html = '';
   items.forEach(function(it){
     var isSelected = editingItemId === it.id;
+    var displayName = (it.tr && it.tr.name) ? it.tr.name : it.id;
     html += '<div class="item-entry'+(isSelected?' selected':'')+'" onclick="editItem(\''+it.id+'\')" data-id="'+it.id+'">';
     html += '<div class="item-entry-info">';
-    html += '<div class="item-entry-name">'+it.tr.name+'</div>';
+    html += '<div class="item-entry-name">'+displayName+'</div>';
     html += '<div class="item-entry-meta">';
     html += '<span class="badge badge-cat">'+getCatName(it.cat)+'</span>';
     if(it.chef) html += '<span class="badge badge-chef">★ Şef</span>';
@@ -1658,17 +1669,47 @@ function saveItem() {
   editingItemId = collected.id;
   renderItemList();
   updateStats();
+  saveToStorage();
 }
 
 function deleteItem(id) {
   var item = ADMIN_DATA.items.find(function(x){return x.id===id});
   if(!item) return;
-  if(!confirm('\"'+item.tr.name+'\" silinsin mi?')) return;
+  var itemName = (item.tr && item.tr.name) ? item.tr.name : id;
+  if(!confirm('"' + itemName + '" silinsin mi?')) return;
+
+  // Yalnızca seçilen ürünü sil
   ADMIN_DATA.items = ADMIN_DATA.items.filter(function(x){return x.id!==id});
-  if(editingItemId===id) cancelEdit();
-  renderItemList();
+
+  // Vitrindeki zaman dilimlerinden silinen ürünün ID'sini temizle
+  if (ADMIN_DATA.showcase) {
+    Object.keys(ADMIN_DATA.showcase).forEach(function(period) {
+      if (ADMIN_DATA.showcase[period] && Array.isArray(ADMIN_DATA.showcase[period].itemIds)) {
+        ADMIN_DATA.showcase[period].itemIds = ADMIN_DATA.showcase[period].itemIds.filter(function(itemId){
+          return itemId !== id;
+        });
+      }
+    });
+  }
+
+  // Kampanyadaki seçili ürün silindiyse güncelle
+  if (ADMIN_DATA.campaign && ADMIN_DATA.campaign.itemId === id) {
+    ADMIN_DATA.campaign.itemId = ADMIN_DATA.items.length ? ADMIN_DATA.items[0].id : '';
+  }
+
+  if(editingItemId===id) {
+    cancelEdit();
+  } else {
+    renderItemList();
+  }
+
+  // Değişikliği anında localStorage'e kaydet (böylece silinen ürün geri gelmez ve menüye anında yansır)
+  saveToStorage();
+
   updateStats();
-  showToast('Ürün silindi: '+item.tr.name, 'danger');
+  populateCampaignItem();
+  renderShowcase();
+  showToast('Ürün silindi: ' + itemName, 'danger');
 }
 
 /* ====================== CATEGORIES ====================== */
@@ -1690,18 +1731,25 @@ function renderCatList() {
 
 function updateCatName(id, lang, val) {
   var c = ADMIN_DATA.categories.find(function(x){return x.id===id});
-  if(c) c.name[lang] = val;
+  if(c) {
+    c.name[lang] = val;
+    saveToStorage();
+  }
 }
 
 function deleteCat(id) {
   var c = ADMIN_DATA.categories.find(function(x){return x.id===id});
   if(!c) return;
-  if(!confirm('\"'+c.name.tr+'\" kategorisi silinsin mi?')) return;
+  var catName = (c.name && c.name.tr) ? c.name.tr : id;
+  if(!confirm('"' + catName + '" kategorisi ve bu kategoriye ait ürünler silinsin mi?')) return;
   ADMIN_DATA.categories = ADMIN_DATA.categories.filter(function(x){return x.id!==id});
+  ADMIN_DATA.items = ADMIN_DATA.items.filter(function(x){return x.cat!==id});
+  saveToStorage();
   renderCatList();
   renderCatFilter();
+  renderItemList();
   updateStats();
-  showToast('Kategori silindi.','danger');
+  showToast('Kategori silindi.', 'danger');
 }
 
 function addCategory() {
@@ -1712,6 +1760,7 @@ function addCategory() {
   if(!tr||!id){showToast('TR adı ve ID gereklidir.','danger');return;}
   if(ADMIN_DATA.categories.find(function(x){return x.id===id})){showToast('Bu ID zaten var!','danger');return;}
   ADMIN_DATA.categories.push({id:id,name:{tr:tr,en:en||tr,ar:ar||tr}});
+  saveToStorage();
   renderCatList();
   renderCatFilter();
   updateStats();
@@ -1761,6 +1810,7 @@ function saveCampaign() {
   ADMIN_DATA.campaign.btnText.tr = document.getElementById('camp-btn-tr').value;
   ADMIN_DATA.campaign.btnText.en = document.getElementById('camp-btn-en').value;
   ADMIN_DATA.campaign.btnText.ar = document.getElementById('camp-btn-ar').value;
+  saveToStorage();
   showToast('Kampanya kaydedildi.','success');
 }
 
@@ -1795,6 +1845,7 @@ function saveShowcase() {
     document.querySelectorAll('[data-period="'+p.id+'"]:checked').forEach(function(cb){ids.push(cb.dataset.item)});
     ADMIN_DATA.showcase[p.id].itemIds = ids;
   });
+  saveToStorage();
   showToast('Vitrin ayarları kaydedildi.','success');
 }
 
@@ -2109,6 +2160,7 @@ function confirmImport() {
   renderAllergenDefs();
   renderAllergenMatrix();
   updateStats();
+  saveToStorage();
   document.getElementById('import-preview').classList.add('hidden');
   showToast('Veriler içe aktarıldı.','success');
 }
@@ -2136,34 +2188,73 @@ function renderCatDist() {
   grid.innerHTML = html;
 }
 
-/* ====================== SAVE & PUBLISH ====================== */
-function saveAndPublish() {
+/* ====================== STORAGE & SYNC ====================== */
+function saveToStorage() {
   try {
     localStorage.setItem('mardiva_admin_data', JSON.stringify(ADMIN_DATA));
+  } catch(e) {
+    console.error('LocalStorage kaydetme hatası:', e);
+  }
+}
+
+function saveAndPublish() {
+  try {
+    saveToStorage();
     showToast('Değişiklikler başarıyla kaydedildi ve yayınlandı! 🎉', 'success');
   } catch(e) {
     showToast('Kaydetme hatası: ' + e.message, 'danger');
   }
 }
 
-/* LocalStorage'den veri yükle (sayfa yenilendiğinde devam etmesi için) */
-(function loadFromStorage() {
+/* LocalStorage'den veriyi güvenle yükle */
+function loadFromStorage() {
   try {
     var saved = localStorage.getItem('mardiva_admin_data');
-    if (saved) {
-      var parsed = JSON.parse(saved);
-      if (parsed.categories) ADMIN_DATA.categories = parsed.categories;
-      if (parsed.items)      ADMIN_DATA.items = parsed.items;
-      if (parsed.allergens)  ADMIN_DATA.allergens = parsed.allergens;
-      if (parsed.campaign)   ADMIN_DATA.campaign = parsed.campaign;
-      if (parsed.showcase)   ADMIN_DATA.showcase = parsed.showcase;
-      if (parsed.ui)         ADMIN_DATA.ui = parsed.ui;
+    if (!saved) return;
+    var parsed = JSON.parse(saved);
+    if (!parsed) return;
+
+    if (Array.isArray(parsed.categories) && parsed.categories.length > 0) {
+      ADMIN_DATA.categories = parsed.categories;
     }
-  } catch(e) {}
-})();
+    if (Array.isArray(parsed.items)) {
+      ADMIN_DATA.items = parsed.items;
+    }
+    if (Array.isArray(parsed.allergens) && parsed.allergens.length > 0) {
+      ADMIN_DATA.allergens = parsed.allergens;
+    }
+    if (parsed.campaign && typeof parsed.campaign === 'object') {
+      ADMIN_DATA.campaign = parsed.campaign;
+    }
+    if (parsed.showcase && typeof parsed.showcase === 'object') {
+      ADMIN_DATA.showcase = parsed.showcase;
+    }
+    if (parsed.ui && typeof parsed.ui === 'object') {
+      ADMIN_DATA.ui = parsed.ui;
+    }
+  } catch(e) {
+    console.warn('LocalStorage yükleme uyarısı:', e);
+  }
+}
+
+/* Gerekirse varsayılan menüye sıfırlama */
+function resetToDefaults() {
+  if (!confirm('Tüm menüyü ve ayarları varsayılan fabrika ayarlarına döndürmek istediğinize emin misiniz?')) return;
+  try {
+    localStorage.removeItem('mardiva_admin_data');
+    if (typeof ADMIN_DEFAULT_DATA !== 'undefined') {
+      ADMIN_DATA = JSON.parse(JSON.stringify(ADMIN_DEFAULT_DATA));
+    }
+    init();
+    showToast('Varsayılan menü verileri geri yüklendi.', 'info');
+  } catch(e) {
+    showToast('Sıfırlama hatası: ' + e.message, 'danger');
+  }
+}
 
 /* ====================== INIT ====================== */
 function init() {
+  loadFromStorage();
   renderCatFilter();
   renderItemList();
   renderCatList();
