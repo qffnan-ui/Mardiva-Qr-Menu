@@ -2789,6 +2789,86 @@ footer p{
   ];
 
   /* ==========================================================================
+     4b. ADMIN PANELİNDEN GELEN VERİLERLE MENU'YÜ OVERRIDE ET
+     Admin panelinde "Kaydet & Yayınla" yapıldığında localStorage'e kaydedilen
+     ADMIN_DATA kullanılarak MENU ve TIME_PRESETS güncellenir.
+     ========================================================================== */
+  (function applyAdminData() {
+    try {
+      var raw = localStorage.getItem('mardiva_admin_data');
+      if (!raw) return;
+      var ad = JSON.parse(raw);
+      if (!ad || !ad.items || !ad.categories) return;
+
+      // Admin items → MENU format dönüşümü
+      var catMap = {};
+      ad.categories.forEach(function(c) { catMap[c.id] = c; });
+
+      // Kategorilere göre items'ı grupla
+      var catItems = {};
+      ad.items.forEach(function(it) {
+        if (!catItems[it.cat]) catItems[it.cat] = [];
+        catItems[it.cat].push(it);
+      });
+
+      // Yeni MENU array'i oluştur
+      var newMenu = [];
+      ad.categories.forEach(function(cat) {
+        var items = catItems[cat.id] || [];
+        if (items.length === 0) return; // Boş kategorileri atla
+
+        var menuCat = {
+          id: cat.id,
+          tr: [cat.name.tr || cat.id, ''],
+          en: [cat.name.en || cat.name.tr || cat.id, ''],
+          ar: [cat.name.ar || cat.name.tr || cat.id, ''],
+          items: items.map(function(it) {
+            // tags hesapla
+            var tags = [];
+            if (it.spicy) tags.push('spicy');
+            if (it.veg) tags.push('veg');
+            if (it.chef) tags.push('chef');
+
+            return {
+              id: it.id,
+              p: it.price || 0,
+              chef: it.chef ? 1 : 0,
+              tags: tags,
+              allergens: it.allergens || [],
+              tr: [it.tr.name || '', it.tr.desc || ''],
+              en: [it.en.name || '', it.en.desc || ''],
+              ar: [it.ar.name || '', it.ar.desc || ''],
+              portion: {
+                tr: it.tr.portion || '',
+                en: it.en.portion || '',
+                ar: it.ar.portion || ''
+              },
+              ingredients: {
+                tr: it.tr.ingredients || '',
+                en: it.en.ingredients || '',
+                ar: it.ar.ingredients || ''
+              },
+              story: {
+                tr: it.tr.story || '',
+                en: it.en.story || '',
+                ar: it.ar.story || ''
+              }
+            };
+          })
+        };
+        newMenu.push(menuCat);
+      });
+
+      if (newMenu.length > 0) {
+        MENU = newMenu;
+      }
+    } catch(e) {
+      // localStorage verisi hatalıysa orijinal MENU'yü koru
+      console.warn('Admin verisi yüklenemedi:', e);
+    }
+  })();
+
+  /* ==========================================================================
      5. TIME-BASED RECOMMENDATION PRESETS
      ========================================================================== */
   var TIME_PRESETS = {

@@ -491,7 +491,7 @@ table.matrix-table input[type=checkbox]{accent-color:var(--accent);width:16px;he
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
       Dışa / İçe Aktar
     </div>
-    <div class="nav-item" onclick="window.open('menu.html','_blank')">
+    <div class="nav-item" onclick="window.open('index.html','_blank')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
       Site Önizlemesi
     </div>
@@ -509,11 +509,11 @@ table.matrix-table input[type=checkbox]{accent-color:var(--accent);width:16px;he
     <div id="header-title">Dashboard <span>Genel Bakış</span></div>
   </div>
   <div class="header-actions">
-    <button class="btn btn-ghost btn-sm" onclick="window.open('menu.html','_blank')">
+    <button class="btn btn-ghost btn-sm" onclick="window.open('index.html','_blank')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
       Önizleme Aç
     </button>
-    <button class="btn btn-success btn-sm" onclick="showToast('Değişiklikler başarıyla kaydedildi!','success')">
+    <button class="btn btn-success btn-sm" onclick="saveAndPublish()">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
       Kaydet &amp; Yayınla
     </button>
@@ -2135,6 +2135,32 @@ function renderCatDist() {
   });
   grid.innerHTML = html;
 }
+
+/* ====================== SAVE & PUBLISH ====================== */
+function saveAndPublish() {
+  try {
+    localStorage.setItem('mardiva_admin_data', JSON.stringify(ADMIN_DATA));
+    showToast('Değişiklikler başarıyla kaydedildi ve yayınlandı! 🎉', 'success');
+  } catch(e) {
+    showToast('Kaydetme hatası: ' + e.message, 'danger');
+  }
+}
+
+/* LocalStorage'den veri yükle (sayfa yenilendiğinde devam etmesi için) */
+(function loadFromStorage() {
+  try {
+    var saved = localStorage.getItem('mardiva_admin_data');
+    if (saved) {
+      var parsed = JSON.parse(saved);
+      if (parsed.categories) ADMIN_DATA.categories = parsed.categories;
+      if (parsed.items)      ADMIN_DATA.items = parsed.items;
+      if (parsed.allergens)  ADMIN_DATA.allergens = parsed.allergens;
+      if (parsed.campaign)   ADMIN_DATA.campaign = parsed.campaign;
+      if (parsed.showcase)   ADMIN_DATA.showcase = parsed.showcase;
+      if (parsed.ui)         ADMIN_DATA.ui = parsed.ui;
+    }
+  } catch(e) {}
+})();
 
 /* ====================== INIT ====================== */
 function init() {
