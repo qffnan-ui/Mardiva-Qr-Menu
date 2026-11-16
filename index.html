@@ -1615,17 +1615,14 @@ footer p{
 </head>
 <body>
 
-<!-- 1. Top Bar: Masa Karşılama, Garson Çağır, Masa Değiştir -->
+<!-- 1. Top Bar: Restoran Karşılama & Garson Çağır -->
 <div class="top-bar" id="topBar">
   <div class="top-bar-inner">
     <div class="table-info" id="tableInfo">
       <span class="table-badge">
-        <svg class="icon icon-stroke" viewBox="0 0 24 24" width="13" height="13"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+        <svg class="icon icon-stroke" viewBox="0 0 24 24" width="13" height="13"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
       </span>
-      <span class="table-text" id="tableGreetingText">Masa 12</span>
-      <button type="button" class="btn-change-table" id="btnChangeTable" aria-label="Masa Değiştir" title="Masa Değiştir">
-        <svg class="icon icon-stroke" viewBox="0 0 24 24" width="12" height="12"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
-      </button>
+      <span class="table-text" id="tableGreetingText">MARDIVA</span>
     </div>
     <div class="top-actions">
       <button type="button" class="btn-call-waiter" id="btnCallWaiter">
@@ -1837,7 +1834,7 @@ footer p{
           <svg class="icon icon-stroke" viewBox="0 0 24 24" width="13" height="13" style="margin-right:4px;"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect><line x1="9" y1="12" x2="15" y2="12"></line><line x1="9" y1="16" x2="13" y2="16"></line></svg>
           <span>Garsona Gösterim Ekranı</span>
         </div>
-        <h2 class="selection-title" id="selectionDrawerTitle">Masa 12 · Seçim Listem</h2>
+        <h2 class="selection-title" id="selectionDrawerTitle">Seçim Listem</h2>
       </div>
       <button type="button" class="drawer-close" id="btnCloseSelectionDrawer" aria-label="Kapat">
         <svg class="icon icon-stroke" viewBox="0 0 24 24" width="13" height="13"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
@@ -1872,22 +1869,10 @@ footer p{
       <svg class="icon icon-stroke" viewBox="0 0 24 24" width="44" height="44" style="color:var(--accent);margin-bottom:12px;"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
     </div>
     <h3 class="modal-title" id="waiterModalTitle">Garson Çağrıldı</h3>
-    <p class="modal-desc" id="waiterModalDesc">Masa 12 için servis ekibimize bildirim iletildi. Birkaç dakika içinde masanızda olacağız.</p>
+    <p class="modal-desc" id="waiterModalDesc">Servis ekibimize bildirim iletildi. Birkaç dakika içinde yanınızda olacağız.</p>
     <button type="button" class="btn-modal-ok" id="btnWaiterModalOk">Tamam</button>
   </div>
 </div>
-
-<!-- 13. Masa Değiştirme Modalı -->
-<div class="modal-overlay" id="tableModalOverlay" aria-hidden="true">
-  <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="tableModalTitle">
-    <h3 class="modal-title" id="tableModalTitle">Masa Numarası</h3>
-    <p class="modal-desc" id="tableModalDesc">Masa numaranızı girin (?masa=12):</p>
-    <input type="text" id="tableInput" class="modal-input" placeholder="Örn: 12">
-    <div class="modal-btns">
-      <button type="button" class="btn-modal-cancel" id="btnTableModalCancel">Vazgeç</button>
-      <button type="button" class="btn-modal-ok" id="btnTableModalSave">Kaydet</button>
-    </div>
-  </div>
 </div>
 
 <script>
@@ -1921,13 +1906,13 @@ footer p{
       chef: "Şefin önerisi",
       n1: "Fiyatlara KDV dahildir.",
       n2: "Alerjiniz varsa sipariş vermeden önce servis ekibimize bildirin.",
-      tablePrefix: "Masa ",
-      welcomeTable: "Hoş geldiniz, Masa {n}",
-      changeTable: "Değiştir",
+      tablePrefix: "",
+      welcomeTable: "MARDIVA'ya Hoş Geldiniz",
+      changeTable: "",
       callWaiter: "Garson Çağır",
       waiterCalled: "Çağrıldı",
       waiterCalledTitle: "Garson Çağrıldı",
-      waiterCalledMsg: "Masa {n} için servis ekibimize bildirim iletildi. Birkaç dakika içinde masanızda olacağız.",
+      waiterCalledMsg: "Servis ekibimize bildirim iletildi. Birkaç dakika içinde yanınızda olacağız.",
       todaySpecialBadge: "Günün Tabağı",
       todaySpecialDesc: "Taş fırında 6 saat ağır ateşte demlendi",
       exploreBtn: "İncele",
@@ -1983,13 +1968,13 @@ footer p{
       chef: "Chef's pick",
       n1: "Prices include VAT.",
       n2: "If you have an allergy, please tell our team before ordering.",
-      tablePrefix: "Table ",
-      welcomeTable: "Welcome, Table {n}",
-      changeTable: "Change",
+      tablePrefix: "",
+      welcomeTable: "Welcome to MARDIVA",
+      changeTable: "",
       callWaiter: "Call Waiter",
       waiterCalled: "Called",
       waiterCalledTitle: "Waiter Called",
-      waiterCalledMsg: "A service request has been sent for Table {n}. Our team will assist you shortly.",
+      waiterCalledMsg: "A service request has been sent to our team. We will assist you shortly.",
       todaySpecialBadge: "Dish of the Day",
       todaySpecialDesc: "Slow-roasted for 6 hours in our traditional stone oven",
       exploreBtn: "Explore",
@@ -2045,13 +2030,13 @@ footer p{
       chef: "اختيار الشيف",
       n1: "الأسعار تشمل ضريبة القيمة المضافة.",
       n2: "إذا كان لديك حساسية، يرجى إبلاغ فريق الخدمة قبل الطلب.",
-      tablePrefix: "طاولة ",
-      welcomeTable: "أهلاً بكم، طاولة {n}",
-      changeTable: "تعديل",
+      tablePrefix: "",
+      welcomeTable: "أهلاً بكم في مارديفا",
+      changeTable: "",
       callWaiter: "طلب النادل",
       waiterCalled: "تم الطلب",
       waiterCalledTitle: "تم استدعاء النادل",
-      waiterCalledMsg: "تم إرسال إشعار لطاقم الخدمة للطاولة {n}. سنكون في خدمتكم خلال لحظات.",
+      waiterCalledMsg: "تم إرسال إشعار لطاقم الخدمة. سنكون في خدمتكم خلال لحظات.",
       todaySpecialBadge: "طبق اليوم",
       todaySpecialDesc: "مطهو ببطء في الفرن الحجري لمدة ٦ ساعات كاملة",
       exploreBtn: "استكشف",
@@ -3025,6 +3010,16 @@ footer p{
 
     try {
       var params = new URLSearchParams(window.location.search);
+      // Minibar alt rota kontrolü (?page=minibar, ?route=minibar veya #minibar)
+      var routePage = (params.get('page') || params.get('route') || params.get('p') || params.get('view') || '').toLowerCase();
+      var hashPage = (window.location.hash || '').replace('#', '').toLowerCase();
+      if (routePage === 'minibar' || hashPage === 'minibar') {
+        var oda = params.get('oda') || params.get('room') || '';
+        var targetUrl = 'minibar.html' + (oda ? ('?oda=' + encodeURIComponent(oda)) : '');
+        window.location.replace(targetUrl);
+        return;
+      }
+
       var m = params.get('masa') || params.get('table');
       if (m && m.trim()) {
         state.table = m.trim();
@@ -3065,7 +3060,7 @@ footer p{
     document.getElementById('note2').textContent = t.n2;
 
     var tableEl = document.getElementById('tableGreetingText');
-    if (tableEl) tableEl.textContent = t.welcomeTable.replace('{n}', state.table);
+    if (tableEl) tableEl.textContent = t.welcomeTable;
 
     var callWaiterTxt = document.getElementById('callWaiterText');
     if (callWaiterTxt && state.waiterCooldown <= 0) callWaiterTxt.textContent = t.callWaiter;

@@ -1,0 +1,1430 @@
+<!DOCTYPE html>
+<html lang="tr" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#232528">
+<title>Mardiva · Minibar Menüsü</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+@font-face {
+  font-family: 'SF Pro Display';
+  src: url('SFPRODISPLAYBOLD.OTF') format('opentype'),
+       local('SF Pro Display'), local('-apple-system'), local('Segoe UI');
+  font-weight: 400 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --bg: #232528;
+  --raise: #2c2e32;
+  --raise-2: #35383e;
+  --line: rgba(236,237,239,.1);
+  --line-strong: rgba(236,237,239,.22);
+  --text: #eceef0;
+  --muted: #9fa4ab;
+  --accent: #cdbb98;
+  --accent-glow: rgba(205,187,152,.15);
+  --accent-hover: #decfae;
+  --success: #5eb88a;
+  --danger: #e06c75;
+  --sf-pro: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--sf-pro);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+  min-height: 100vh;
+  padding-bottom: 90px;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+}
+
+[dir="rtl"] {
+  font-family: 'Noto Kufi Arabic', var(--sf-pro);
+}
+
+.container {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+/* TOP BAR */
+.top-bar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(35, 37, 40, 0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--line);
+  padding: 12px 16px;
+}
+
+.top-bar-inner {
+  max-width: 640px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: var(--text);
+}
+
+.brand-emblem {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: var(--raise);
+  border: 1px solid var(--line-strong);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--sf-pro);
+  font-weight: 800;
+  font-size: 20px;
+  color: var(--accent);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.brand-text h1 {
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  line-height: 1.2;
+}
+
+.brand-text span {
+  font-size: 11px;
+  color: var(--accent);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.top-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-qr-top {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  background: var(--raise);
+  border: 1px solid var(--line);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-qr-top:hover {
+  background: var(--raise-2);
+  border-color: var(--accent);
+}
+
+.lang-selector {
+  display: flex;
+  border-radius: 20px;
+  background: var(--raise);
+  border: 1px solid var(--line);
+  padding: 2px;
+}
+
+.lang-btn {
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 5px 10px;
+  border-radius: 16px;
+  cursor: pointer;
+  font-family: var(--sf-pro);
+  transition: all 0.2s ease;
+}
+
+.lang-btn.active {
+  background: var(--accent);
+  color: #141619;
+}
+
+/* HERO SECTION */
+.hero {
+  padding: 26px 0 16px;
+  text-align: center;
+}
+
+.hero-subtitle {
+  font-size: 12px;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.hero-title {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 8px;
+  letter-spacing: -0.5px;
+}
+
+.hero-desc {
+  font-size: 13px;
+  color: var(--muted);
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+/* NOTICE CARD */
+.notice-card {
+  background: var(--raise);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin: 16px 0 20px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  position: relative;
+  overflow: hidden;
+}
+
+.notice-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; bottom: 0;
+  width: 3px;
+  background: var(--accent);
+}
+
+[dir="rtl"] .notice-card::before {
+  left: auto; right: 0;
+}
+
+.notice-icon {
+  width: 20px;
+  height: 20px;
+  color: var(--accent);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.notice-content {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.notice-content strong {
+  color: var(--text);
+  font-weight: 700;
+}
+
+.notice-highlight {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* SEARCH */
+.search-box {
+  position: relative;
+  margin-bottom: 16px;
+}
+
+.search-input {
+  width: 100%;
+  height: 44px;
+  background: var(--raise);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 0 16px 0 42px;
+  color: var(--text);
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+[dir="rtl"] .search-input {
+  padding: 0 42px 0 16px;
+}
+
+.search-input:focus {
+  border-color: var(--accent);
+  background: var(--raise-2);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+.search-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  color: var(--muted);
+  pointer-events: none;
+}
+
+[dir="rtl"] .search-icon {
+  left: auto;
+  right: 14px;
+}
+
+/* CATEGORY TABS */
+.category-nav {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  margin-bottom: 20px;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.category-nav::-webkit-scrollbar { display: none; }
+
+.cat-tab {
+  background: var(--raise);
+  border: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 14px;
+  border-radius: 20px;
+  white-space: nowrap;
+  cursor: pointer;
+  font-family: var(--sf-pro);
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cat-tab:hover {
+  background: var(--raise-2);
+  color: var(--text);
+}
+
+.cat-tab.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #141619;
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(205, 187, 152, 0.25);
+}
+
+/* PRODUCT SECTION */
+.category-block {
+  margin-bottom: 28px;
+}
+
+.category-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 0.5px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--line);
+}
+
+.item-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* PRODUCT CARD */
+.minibar-item {
+  background: var(--raise);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  transition: all 0.2s ease;
+}
+
+.minibar-item:hover {
+  border-color: var(--line-strong);
+  background: var(--raise-2);
+  transform: translateY(-1px);
+}
+
+.item-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.item-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+  flex-wrap: wrap;
+}
+
+.item-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.item-badge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 6px;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+.badge-free {
+  background: rgba(94, 184, 138, 0.15);
+  color: var(--success);
+  border: 1px solid rgba(94, 184, 138, 0.3);
+}
+
+.badge-mardin {
+  background: var(--accent-glow);
+  color: var(--accent);
+  border: 1px solid var(--line-strong);
+}
+
+.item-desc {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.4;
+  margin-bottom: 4px;
+}
+
+.item-portion {
+  font-size: 11px;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.item-side {
+  text-align: right;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+[dir="rtl"] .item-side {
+  text-align: left;
+  align-items: flex-start;
+}
+
+.item-price {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--accent-hover);
+  white-space: nowrap;
+}
+
+.item-price.free-text {
+  color: var(--success);
+}
+
+.qty-control {
+  display: flex;
+  align-items: center;
+  background: var(--bg);
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  overflow: hidden;
+}
+
+.qty-btn {
+  width: 28px;
+  height: 28px;
+  background: none;
+  border: none;
+  color: var(--text);
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease;
+}
+
+.qty-btn:hover {
+  background: rgba(255,255,255,0.1);
+  color: var(--accent);
+}
+
+.qty-val {
+  min-width: 24px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+/* FLOATING BAR */
+.floating-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 40;
+  background: rgba(35, 37, 40, 0.95);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-top: 1px solid var(--line-strong);
+  padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px));
+  box-shadow: 0 -8px 24px rgba(0,0,0,0.5);
+  display: none;
+}
+
+.floating-bar.visible {
+  display: block;
+  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+.floating-inner {
+  max-width: 640px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.floating-summary {
+  display: flex;
+  flex-direction: column;
+}
+
+.floating-label {
+  font-size: 11px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.floating-total {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: var(--sf-pro);
+}
+
+.btn-accent {
+  background: var(--accent);
+  color: #141619;
+}
+
+.btn-accent:hover {
+  background: var(--accent-hover);
+  transform: translateY(-1px);
+}
+
+/* QR MODAL */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  backdrop-filter: blur(8px);
+  z-index: 100;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.modal-overlay.open {
+  display: flex;
+}
+
+.modal-card {
+  background: var(--raise);
+  border: 1px solid var(--line-strong);
+  border-radius: 18px;
+  width: 100%;
+  max-width: 420px;
+  overflow: hidden;
+  box-shadow: 0 16px 40px rgba(0,0,0,0.6);
+}
+
+.modal-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.modal-header h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 22px;
+  line-height: 1;
+}
+
+.modal-body {
+  padding: 20px;
+  text-align: center;
+}
+
+.qr-box {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 20px;
+  display: inline-block;
+  margin: 0 auto 16px;
+}
+
+.toast-container {
+  position: fixed;
+  top: 70px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;
+}
+
+.toast {
+  background: var(--raise-2);
+  color: var(--text);
+  border: 1px solid var(--line-strong);
+  border-radius: 10px;
+  padding: 10px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--muted);
+}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<header class="top-bar">
+  <div class="top-bar-inner">
+    <a href="minibar.html" class="brand">
+      <div class="brand-emblem">M</div>
+      <div class="brand-text">
+        <h1>MARDIVA</h1>
+        <span>MINIBAR</span>
+      </div>
+    </a>
+
+    <div class="top-actions">
+      <!-- Direct QR Display Button -->
+      <button class="btn-qr-top" onclick="openQrModal()" title="Minibar QR Kodu">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        <span>QR</span>
+      </button>
+
+      <!-- Language Switcher -->
+      <div class="lang-selector">
+        <button class="lang-btn active" data-lang="tr" onclick="setLang('tr')">TR</button>
+        <button class="lang-btn" data-lang="en" onclick="setLang('en')">EN</button>
+        <button class="lang-btn" data-lang="ar" onclick="setLang('ar')">عربي</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="container">
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-subtitle" id="txtSubtitle">ODA İÇİ İKRAM &amp; MİNİBAR</div>
+    <h2 class="hero-title" id="txtTitle">Minibar Fiyat Listesi</h2>
+    <p class="hero-desc" id="txtDesc">Konforunuz ve keyfiniz için özenle hazırlanan minibar ürünlerimiz.</p>
+  </section>
+
+  <!-- NOTICE CARD -->
+  <div class="notice-card">
+    <svg class="notice-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="12" cy="12" r="10"/>
+      <line x1="12" y1="16" x2="12" y2="12"/>
+      <line x1="12" y1="8" x2="12.01" y2="8"/>
+    </svg>
+    <div class="notice-content" id="txtNotice">
+      <strong>Bilgilendirme:</strong> Minibarınız her gün kat hizmetleri tarafından kontrol edilerek yenilenmektedir. Tüketilen ürünler çıkış sırasında oda hesabınıza yansıtılacaktır. Ek istekleriniz için resepsiyonu arayabilirsiniz: <span class="notice-highlight">Dahili 0</span>.
+    </div>
+  </div>
+
+  <!-- SEARCH BOX -->
+  <div class="search-box">
+    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="11" cy="11" r="8"/>
+      <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+    </svg>
+    <input type="text" class="search-input" id="minibarSearch" placeholder="Minibar ürünü ara..." oninput="onSearch()">
+  </div>
+
+  <!-- CATEGORY NAV -->
+  <nav class="category-nav" id="categoryNav"></nav>
+
+  <!-- PRODUCT LIST CONTAINER -->
+  <div id="productContainer"></div>
+</main>
+
+<!-- FLOATING SELECTION BAR -->
+<div class="floating-bar" id="floatingBar">
+  <div class="floating-inner">
+    <div class="floating-summary">
+      <span class="floating-label" id="txtSummaryLabel">Tüketim &amp; Seçim Listesi</span>
+      <span class="floating-total" id="txtSummaryTotal">0 ₺</span>
+    </div>
+    <button class="btn btn-accent" onclick="requestRefill()" id="btnRefill">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg>
+      Resepsiyona Bildir / Yenile
+    </button>
+  </div>
+</div>
+
+<!-- QR MODAL -->
+<div class="modal-overlay" id="qrModal" onclick="if(event.target===this)closeQrModal()">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3 id="txtQrModalTitle">Minibar Menüsü QR Kodu</h3>
+      <button class="modal-close" onclick="closeQrModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="qr-box" id="minibarQrBox"></div>
+      <div style="font-weight:700;color:var(--text);font-size:15px;margin-bottom:4px">MARDIVA HOTEL MINIBAR</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:14px" id="qrDirectUrl">https://mardiva.menu/minibar.html</div>
+      <button class="btn btn-accent" style="width:100%" onclick="copyMinibarLink()" id="btnCopyLink">Bağlantıyı Kopyala</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+/* ==========================================================================
+   MINIBAR CORE DATASET
+   ========================================================================== */
+var MINIBAR_DATA = {
+  categories: [
+    { id: "cold_drinks", icon: "🥤", tr: "Soğuk İçecekler", en: "Cold Beverages", ar: "المشروبات الباردة" },
+    { id: "snacks",      icon: "🥜", tr: "Atıştırmalık & Çerez", en: "Snacks & Nuts", ar: "وجبات خفيفة ومكسرات" },
+    { id: "tea_coffee",  icon: "☕", tr: "Sıcak İçecekler (İkram)", en: "Hot Drinks (Complimentary)", ar: "مشروبات ساخنة (مجانية)" },
+    { id: "alcohol",     icon: "🍷", tr: "Şarap & Alkol", en: "Wine & Spirits", ar: "المشروبات الكحولية" },
+    { id: "comfort",     icon: "✨", tr: "Kişisel Bakım & Konfor", en: "Comfort & Essentials", ar: "العناية الشخصية" }
+  ],
+  items: [
+    {
+      id: "coca_cola",
+      cat: "cold_drinks",
+      price: 95,
+      free: false,
+      badge: "",
+      tr: { name: "Coca-Cola", desc: "Soğuk kutu kola", portion: "330 ml" },
+      en: { name: "Coca-Cola", desc: "Chilled can", portion: "330 ml" },
+      ar: { name: "كوكا كولا", desc: "علبة كولا مثلجة", portion: "٣٣٠ مل" }
+    },
+    {
+      id: "coca_cola_zero",
+      cat: "cold_drinks",
+      price: 95,
+      free: false,
+      badge: "",
+      tr: { name: "Coca-Cola Zero Sugar", desc: "Şekersiz soğuk kola", portion: "330 ml" },
+      en: { name: "Coca-Cola Zero Sugar", desc: "Zero sugar can", portion: "330 ml" },
+      ar: { name: "كوكا كولا زيرو", desc: "كولا خالية من السكر", portion: "٣٣٠ مل" }
+    },
+    {
+      id: "fanta",
+      cat: "cold_drinks",
+      price: 90,
+      free: false,
+      badge: "",
+      tr: { name: "Fanta Portakal", desc: "Ferahlatıcı portakal gazlı içecek", portion: "330 ml" },
+      en: { name: "Fanta Orange", desc: "Orange sparkling soda", portion: "330 ml" },
+      ar: { name: "فانتا برتقال", desc: "مشروب برتقال غازي", portion: "٣٣٠ مل" }
+    },
+    {
+      id: "mardiva_water",
+      cat: "cold_drinks",
+      price: 0,
+      free: true,
+      badge: "İkram",
+      tr: { name: "Mardiva Doğal Kaynak Suyu", desc: "Otelimizin ücretsiz ikramıdır. Günlük yenilenir.", portion: "330 ml Cam Şişe" },
+      en: { name: "Mardiva Spring Water", desc: "Complimentary hotel courtesy. Replenished daily.", portion: "330 ml Glass Bottle" },
+      ar: { name: "مياه مارديفا الطبيعية", desc: "ضيافة مجانية من الفندق. تُجدد يومياً.", portion: "٣٣٠ مل زجاجة" }
+    },
+    {
+      id: "san_pellegrino",
+      cat: "cold_drinks",
+      price: 110,
+      free: false,
+      badge: "",
+      tr: { name: "S.Pellegrino Maden Suyu", desc: "Doğal mineralli gazlı İtalyan suyu", portion: "250 ml Cam Şişe" },
+      en: { name: "S.Pellegrino Sparkling Water", desc: "Natural sparkling mineral water", portion: "250 ml Glass" },
+      ar: { name: "مياه سان بيليغرينو الفوارة", desc: "مياه معدنية فوارة طبيعية", portion: "٢٥٠ مل" }
+    },
+    {
+      id: "kizilay_soda",
+      cat: "cold_drinks",
+      price: 50,
+      free: false,
+      badge: "",
+      tr: { name: "Kızılay Doğal Maden Suyu", desc: "Zengin mineralli kaynak sodası", portion: "200 ml" },
+      en: { name: "Mineral Sparkling Soda", desc: "Rich mineral sparkling water", portion: "200 ml" },
+      ar: { name: "مياه معدنية غازية", desc: "مياه فوارة غنية بالمعادن", portion: "٢٠٠ مل" }
+    },
+    {
+      id: "cappy_juice",
+      cat: "cold_drinks",
+      price: 85,
+      free: false,
+      badge: "",
+      tr: { name: "Cappy Karışık Meyve Suyu", desc: "Zengin meyve nektarı", portion: "330 ml" },
+      en: { name: "Cappy Mixed Fruit Juice", desc: "Rich fruit juice", portion: "330 ml" },
+      ar: { name: "عصير فواكه مشكلة كابي", desc: "عصير فواكه طبيعي", portion: "٣٣٠ مل" }
+    },
+    {
+      id: "red_bull",
+      cat: "cold_drinks",
+      price: 160,
+      free: false,
+      badge: "",
+      tr: { name: "Red Bull Energy Drink", desc: "Klasik kutu enerji içeceği", portion: "250 ml" },
+      en: { name: "Red Bull Energy Drink", desc: "Classic energy drink can", portion: "250 ml" },
+      ar: { name: "مشروب الطاقة ريد بول", desc: "مشروب طاقة كلاسيكي", portion: "٢٥٠ مل" }
+    },
+
+    /* Atıştırmalık & Çerez */
+    {
+      id: "mardin_almond",
+      cat: "snacks",
+      price: 220,
+      free: false,
+      badge: "Mardin Özel",
+      tr: { name: "Mardin Mavi Badem Şekeri", desc: "Geleneksel bitkisel lohusa boyalı, taze çıtır Mardin bademi.", portion: "Özel Kutu · 150 gr" },
+      en: { name: "Mardin Blue Sugar Almonds", desc: "Traditional handcrafted local Mardin coated almonds.", portion: "Special Box · 150 g" },
+      ar: { name: "لوز ماردين الأزرق المسكر", desc: "لوز ماردين التقليدي الفاخر.", portion: "علبة خاصة · ١٥٠ غرام" }
+    },
+    {
+      id: "antep_pistachio",
+      cat: "snacks",
+      price: 260,
+      free: false,
+      badge: "",
+      tr: { name: "Kavrulmuş Antep Fıstığı", desc: "Çifte kavrulmuş çıtır lüks fıstık", portion: "100 gr" },
+      en: { name: "Roasted Antep Pistachios", desc: "Double roasted crispy pistachios", portion: "100 g" },
+      ar: { name: "فستق عنتابي محمص", desc: "فستق مقرمش محمص بعناية", portion: "١٠٠ غرام" }
+    },
+    {
+      id: "mixed_nuts",
+      cat: "snacks",
+      price: 210,
+      free: false,
+      badge: "",
+      tr: { name: "Lüks Karışık Kuruyemiş", desc: "Kaju, kavrulmuş fındık, çiğ badem ve ceviz", portion: "120 gr" },
+      en: { name: "Luxury Mixed Nuts", desc: "Cashews, hazelnuts, almonds & walnuts", portion: "120 g" },
+      ar: { name: "مكسرات مشكلة فاخرة", desc: "كاجو، بندق، لوز وجوز", portion: "١٢٠ غرام" }
+    },
+    {
+      id: "pringles_original",
+      cat: "snacks",
+      price: 120,
+      free: false,
+      badge: "",
+      tr: { name: "Pringles Original", desc: "Tuzlu çıtır patates cipsi", portion: "40 gr" },
+      en: { name: "Pringles Original", desc: "Crispy salted potato chips", portion: "40 g" },
+      ar: { name: "برينجلز أصلي", desc: "رقائق بطاطس مقرمشة مملحة", portion: "٤٠ غرام" }
+    },
+    {
+      id: "lindt_chocolate",
+      cat: "snacks",
+      price: 180,
+      free: false,
+      badge: "",
+      tr: { name: "Antep Fıstıklı Tablet Çikolata", desc: "%60 bitter ve bol fıstıklı çikolata", portion: "60 gr" },
+      en: { name: "Pistachio Dark Chocolate", desc: "Rich dark chocolate with whole pistachios", portion: "60 g" },
+      ar: { name: "شوكولاتة داكنة بالفستق", desc: "شوكولاتة فاخرة بالفستق الحلبي", portion: "٦٠ غرام" }
+    },
+
+    /* Sıcak İçecekler (İkram) */
+    {
+      id: "mardin_dibek",
+      cat: "tea_coffee",
+      price: 0,
+      free: true,
+      badge: "İkram",
+      tr: { name: "Geleneksel Mardin Dibek Kahvesi", desc: "Kakuleli ve menengiçli zengin öğütülmüş kahve.", portion: "2 Hazır Paket" },
+      en: { name: "Mardin Dibek Coffee", desc: "Cardamom & mastic scented local stone-ground coffee.", portion: "2 Packs" },
+      ar: { name: "قهوة ديبك الماردينية", desc: "قهوة ماردين التراثية بالهيل والمستكة.", portion: "عبوتان مجاناً" }
+    },
+    {
+      id: "suryani_coffee",
+      cat: "tea_coffee",
+      price: 0,
+      free: true,
+      badge: "İkram",
+      tr: { name: "Mardin Süryani Kahvesi", desc: "Çifte kavrulmuş kakuleli kadim lezzet.", portion: "2 Hazır Paket" },
+      en: { name: "Syriac Cardamom Coffee", desc: "Double-roasted ancient blend with fragrant cardamom.", portion: "2 Packs" },
+      ar: { name: "القهوة السريانية بالهيل", desc: "قهوة سريانية ماردينية فريدة بمذاق الهيل.", portion: "عبوتان مجاناً" }
+    },
+    {
+      id: "tea_selection",
+      cat: "tea_coffee",
+      price: 0,
+      free: true,
+      badge: "İkram",
+      tr: { name: "Bitki & Siyah Çay Çeşitleri", desc: "Ihlamur, yeşil çay, papatya ve Rize siyah çay.", portion: "4 Poşet Çay" },
+      en: { name: "Herbal & Black Tea Selection", desc: "Chamomile, green tea and Turkish black tea.", portion: "4 Tea Bags" },
+      ar: { name: "تشكيلة الشاي الفاخرة", desc: "شاي أسود، بابونج، وشاي أخضر.", portion: "٤ أكياس" }
+    },
+
+    /* Şarap & Alkol */
+    {
+      id: "suryani_wine_red",
+      cat: "alcohol",
+      price: 580,
+      free: false,
+      badge: "Yerel Seçki",
+      tr: { name: "Mardin Süryani Kırmızı Şarabı", desc: "Öküzgözü & Boğazkere meşe fıçılı Süryani şarabı.", portion: "Mini Şişe · 37.5 cl" },
+      en: { name: "Syriac Artisan Red Wine", desc: "Anatolian grapes fermented in historical cellars.", portion: "Demi-Bottle · 37.5 cl" },
+      ar: { name: "نبيذ سرياني أحمر محلي", desc: "نبيذ مارديني تاريخي أصيل من عنب الأناضول.", portion: "٣٧.٥ مل" }
+    },
+    {
+      id: "efes_special",
+      cat: "alcohol",
+      price: 190,
+      free: false,
+      badge: "",
+      tr: { name: "Efes Özel Seri Bira", desc: "%100 malt açık renkli bira", portion: "33 cl Şişe" },
+      en: { name: "Efes Special Series Malt", desc: "Chilled 100% malt beer", portion: "33 cl Bottle" },
+      ar: { name: "بيرة إفيس الفاخرة", desc: "بيرة شعير ١٠٠٪ باردة", portion: "٣٣ مل" }
+    },
+    {
+      id: "chivas_regal",
+      cat: "alcohol",
+      price: 480,
+      free: false,
+      badge: "",
+      tr: { name: "Chivas Regal 12 Yıllık İskoç Viskisi", desc: "Premium harman İskoç viskisi", portion: "Mini Şişe · 5 cl" },
+      en: { name: "Chivas Regal 12 YO Scotch", desc: "Premium blended Scotch whisky", portion: "Miniature · 5 cl" },
+      ar: { name: "ويسكي شيفاز ريغال ١٢ سنة", desc: "ويسكي سكوتش فاخر مصغر", portion: "٥ مل" }
+    },
+    {
+      id: "yeni_raki",
+      cat: "alcohol",
+      price: 340,
+      free: false,
+      badge: "",
+      tr: { name: "Yeni Rakı Yeni Seri", desc: "Geleneksel anasonlu Türk rakısı", portion: "Mini Şişe · 5 cl" },
+      en: { name: "Yeni Raki Turkish Anise Spirit", desc: "Authentic Turkish spirit with anise", portion: "Miniature · 5 cl" },
+      ar: { name: "راكي تركي أصيل يني راكي", desc: "مشروب الينسون التركي التقليدي", portion: "٥ مل" }
+    },
+
+    /* Kişisel Bakım & Konfor */
+    {
+      id: "dental_kit",
+      cat: "comfort",
+      price: 90,
+      free: false,
+      badge: "",
+      tr: { name: "Bambu Diş Bakım Kiti", desc: "Doğal bambu fırça ve taze nane macun", portion: "1 Set" },
+      en: { name: "Bamboo Dental Kit", desc: "Bamboo toothbrush and mint toothpaste", portion: "1 Kit" },
+      ar: { name: "طقم العناية بالأسنان من الخيزران", desc: "فرشاة خيزران ومعجون منعش", portion: "طقم واحد" }
+    },
+    {
+      id: "shaving_kit",
+      cat: "comfort",
+      price: 110,
+      free: false,
+      badge: "",
+      tr: { name: "Lüks Tıraş Kiti", desc: "3 bıçaklı tıraş bıçağı ve köpük", portion: "1 Set" },
+      en: { name: "Premium Shaving Kit", desc: "Triple-blade razor and shaving foam", portion: "1 Kit" },
+      ar: { name: "طقم حلاقة فاخر", desc: "شفرة حلاقة ثلاثية ورغوة", portion: "طقم واحد" }
+    },
+    {
+      id: "sleep_mask",
+      cat: "comfort",
+      price: 70,
+      free: false,
+      badge: "",
+      tr: { name: "İpek Uyku Göz Maskesi", desc: "Dinlendirici karartıcı göz bandı", portion: "1 Adet" },
+      en: { name: "Silk Sleep Eye Mask", desc: "Blackout eye mask for restful sleep", portion: "1 Piece" },
+      ar: { name: "قناع نوم حريري", desc: "قناع مريح لنوم هادئ", portion: "قطعة واحدة" }
+    }
+  ]
+};
+
+var state = {
+  lang: "tr",
+  searchQuery: "",
+  activeCategory: "all",
+  selection: {},
+  data: MINIBAR_DATA
+};
+
+var UI_STRINGS = {
+  tr: {
+    subtitle: "ODA İÇİ İKRAM & MİNİBAR",
+    title: "Minibar Fiyat Listesi",
+    desc: "Konforunuz ve keyfiniz için özenle hazırlanan minibar ürünlerimiz.",
+    notice: "<strong>Bilgilendirme:</strong> Minibarınız her gün kat hizmetleri tarafından kontrol edilerek yenilenmektedir. Tüketilen ürünler çıkış sırasında oda hesabınıza yansıtılacaktır. Ek istekleriniz için resepsiyonu arayabilirsiniz: <span class='notice-highlight'>Dahili 0</span>.",
+    searchPlaceholder: "Minibar ürünü ara...",
+    allCats: "Tümü",
+    complimentary: "İkram",
+    refillAction: "Resepsiyona Bildir / Yenile",
+    summaryLabel: "Tüketim & Seçim Listesi",
+    noResults: "Aradığınız kriterlere uygun ürün bulunamadı.",
+    qrTitle: "Minibar Menüsü QR Kodu",
+    copyLink: "Bağlantıyı Kopyala",
+    linkCopied: "Minibar bağlantısı kopyalandı! 📋",
+    refillSent: "Minibar yenileme isteğiniz resepsiyona iletilmek üzere hazırlandı! 🛎️",
+    selectFirst: "Lütfen önce yenilenmesini istediğiniz ürünleri seçin."
+  },
+  en: {
+    subtitle: "IN-ROOM REFRESHMENT & MINIBAR",
+    title: "Minibar Price List",
+    desc: "Carefully curated refreshments and snacks for your utmost comfort.",
+    notice: "<strong>Notice:</strong> Your minibar is inspected and restocked daily by housekeeping. Consumed items will be billed to your room account upon departure. For additional requests, dial: <span class='notice-highlight'>Ext. 0</span>.",
+    searchPlaceholder: "Search minibar items...",
+    allCats: "All",
+    complimentary: "Complimentary",
+    refillAction: "Notify Reception / Restock",
+    summaryLabel: "Selected / Consumed List",
+    noResults: "No minibar items found matching your criteria.",
+    qrTitle: "Minibar Menu QR Code",
+    copyLink: "Copy Link",
+    linkCopied: "Minibar link copied to clipboard! 📋",
+    refillSent: "Minibar restock request prepared for reception! 🛎️",
+    selectFirst: "Please select the items you would like restocked first."
+  },
+  ar: {
+    subtitle: "الميني بار وضيافة الغرفة الخاصة",
+    title: "قائمة أسعار الميني بار",
+    desc: "تشكيلة مختارة بعناية من المشروبات والوجبات الخفيفة لراحتكم وسعادتكم.",
+    notice: "<strong>تنويه:</strong> يتم فحص وتجديد الميني بار يومياً من قبل خدمة الغرف. ستتم إضافة المواد المستهلكة إلى فاتورة غرفتكم عند المغادرة. للطلبات الإضافية يرجى الاتصال بالرقم: <span class='notice-highlight'>الداخلي 0</span>.",
+    searchPlaceholder: "ابحث في محتويات الميني بار...",
+    allCats: "الكل",
+    complimentary: "ضيافة",
+    refillAction: "إبلاغ الاستقبال / طلب تجديد",
+    summaryLabel: "قائمة الاستهلاك المحددة",
+    noResults: "لم يتم العثور على منتجات تطابق البحث.",
+    qrTitle: "رمز QR لقائمة الميني بار",
+    copyLink: "نسخ الرابط",
+    linkCopied: "تم نسخ رابط الميني بار بنجاح! 📋",
+    refillSent: "تم تجهيز طلب تجديد الميني بار لإرساله إلى الاستقبال! 🛎️",
+    selectFirst: "يرجى تحديد العناصر التي ترغب في تجديدها أولاً."
+  }
+};
+
+function init() {
+  try {
+    var savedLang = localStorage.getItem('mardiva-lang') || localStorage.getItem('mardiva_minibar_lang');
+    if (savedLang && UI_STRINGS[savedLang]) state.lang = savedLang;
+  } catch(e){}
+
+  // LocalStorage senkronizasyonu
+  try {
+    var rawAdmin = localStorage.getItem('mardiva_minibar_data');
+    if (rawAdmin) {
+      var parsed = JSON.parse(rawAdmin);
+      if (parsed && Array.isArray(parsed.items) && parsed.items.length > 0) {
+        state.data = parsed;
+      }
+    }
+  } catch(e){}
+
+  renderUI();
+  renderCategories();
+  renderProducts();
+  updateFloatingBar();
+
+  // Canlı senkronizasyon (Admin'den değişiklik yapıldığında sayfayı yenilemeden anında yansır)
+  window.addEventListener('storage', function(e) {
+    if (e.key === 'mardiva_minibar_data') {
+      try {
+        var updated = JSON.parse(e.newValue);
+        if (updated && Array.isArray(updated.items)) {
+          state.data = updated;
+          renderCategories();
+          renderProducts();
+          updateFloatingBar();
+        }
+      } catch(err){}
+    }
+  });
+}
+
+function setLang(lang) {
+  if (!UI_STRINGS[lang]) return;
+  state.lang = lang;
+  try {
+    localStorage.setItem('mardiva-lang', lang);
+    localStorage.setItem('mardiva_minibar_lang', lang);
+  } catch(e){}
+
+  document.documentElement.lang = lang;
+  document.documentElement.dir = (lang === 'ar') ? 'rtl' : 'ltr';
+
+  document.querySelectorAll('.lang-btn').forEach(function(b){
+    b.classList.toggle('active', b.dataset.lang === lang);
+  });
+
+  renderUI();
+  renderCategories();
+  renderProducts();
+  updateFloatingBar();
+}
+
+function renderUI() {
+  var t = UI_STRINGS[state.lang];
+  document.getElementById('txtSubtitle').textContent = t.subtitle;
+  document.getElementById('txtTitle').textContent = t.title;
+  document.getElementById('txtDesc').textContent = t.desc;
+  document.getElementById('txtNotice').innerHTML = t.notice;
+  document.getElementById('minibarSearch').placeholder = t.searchPlaceholder;
+  document.getElementById('txtSummaryLabel').textContent = t.summaryLabel;
+  document.getElementById('btnRefill').innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg> ' + t.refillAction;
+  document.getElementById('txtQrModalTitle').textContent = t.qrTitle;
+  document.getElementById('btnCopyLink').textContent = t.copyLink;
+}
+
+function renderCategories() {
+  var t = UI_STRINGS[state.lang];
+  var nav = document.getElementById('categoryNav');
+  var cats = state.data.categories || [];
+
+  var html = '<button class="cat-tab ' + (state.activeCategory === 'all' ? 'active' : '') + '" onclick="filterCategory(\'all\')"><span>✨</span> ' + t.allCats + '</button>';
+  
+  cats.forEach(function(c) {
+    var title = c[state.lang] || c.tr || c.id;
+    var isActive = state.activeCategory === c.id;
+    html += '<button class="cat-tab ' + (isActive ? 'active' : '') + '" onclick="filterCategory(\'' + c.id + '\')"><span>' + (c.icon || '•') + '</span> ' + escHtml(title) + '</button>';
+  });
+
+  nav.innerHTML = html;
+}
+
+function filterCategory(catId) {
+  state.activeCategory = catId;
+  renderCategories();
+  renderProducts();
+}
+
+function onSearch() {
+  state.searchQuery = document.getElementById('minibarSearch').value.toLowerCase().trim();
+  renderProducts();
+}
+
+function renderProducts() {
+  var container = document.getElementById('productContainer');
+  var items = state.data.items || [];
+  var cats = state.data.categories || [];
+  var q = state.searchQuery;
+  var lang = state.lang;
+  var t = UI_STRINGS[lang];
+
+  var filteredItems = items.filter(function(it) {
+    if (state.activeCategory !== 'all' && it.cat !== state.activeCategory) return false;
+    if (q) {
+      var d = it[lang] || it.tr || {};
+      var name = (d.name || '').toLowerCase();
+      var desc = (d.desc || '').toLowerCase();
+      if (name.indexOf(q) === -1 && desc.indexOf(q) === -1) return false;
+    }
+    return true;
+  });
+
+  if (filteredItems.length === 0) {
+    container.innerHTML = '<div class="empty-state"><p>' + t.noResults + '</p></div>';
+    return;
+  }
+
+  var grouped = {};
+  filteredItems.forEach(function(it) {
+    if (!grouped[it.cat]) grouped[it.cat] = [];
+    grouped[it.cat].push(it);
+  });
+
+  var html = '';
+  cats.forEach(function(c) {
+    var cItems = grouped[c.id];
+    if (!cItems || cItems.length === 0) return;
+
+    var catName = c[lang] || c.tr || c.id;
+    html += '<section class="category-block">';
+    html += '<h3 class="category-title">' + (c.icon || '•') + ' ' + escHtml(catName) + ' (' + cItems.length + ')</h3>';
+    html += '<div class="item-list">';
+
+    cItems.forEach(function(it) {
+      var d = it[lang] || it.tr || {};
+      var name = d.name || it.id;
+      var desc = d.desc || '';
+      var portion = d.portion || '';
+      var qty = state.selection[it.id] || 0;
+      var priceText = it.free ? t.complimentary : (it.price + ' ₺');
+      var priceClass = it.free ? 'item-price free-text' : 'item-price';
+
+      html += '<div class="minibar-item" data-id="' + it.id + '">';
+      html += '<div class="item-main">';
+      html += '<div class="item-header">';
+      html += '<span class="item-name">' + escHtml(name) + '</span>';
+      if (it.free) {
+        html += '<span class="item-badge badge-free">' + t.complimentary + '</span>';
+      } else if (it.badge) {
+        html += '<span class="item-badge badge-mardin">' + escHtml(it.badge) + '</span>';
+      }
+      html += '</div>';
+
+      if (desc) {
+        html += '<div class="item-desc">' + escHtml(desc) + '</div>';
+      }
+      if (portion) {
+        html += '<div class="item-portion">' + escHtml(portion) + '</div>';
+      }
+      html += '</div>';
+
+      html += '<div class="item-side">';
+      html += '<div class="' + priceClass + '">' + priceText + '</div>';
+      html += '<div class="qty-control">';
+      html += '<button type="button" class="qty-btn" onclick="updateQty(\'' + it.id + '\', -1)">−</button>';
+      html += '<span class="qty-val" id="qty_' + it.id + '">' + qty + '</span>';
+      html += '<button type="button" class="qty-btn" onclick="updateQty(\'' + it.id + '\', 1)">+</button>';
+      html += '</div>';
+      html += '</div>';
+      html += '</div>';
+    });
+
+    html += '</div>';
+    html += '</section>';
+  });
+
+  container.innerHTML = html;
+}
+
+function updateQty(id, delta) {
+  var current = state.selection[id] || 0;
+  var next = current + delta;
+  if (next <= 0) {
+    delete state.selection[id];
+  } else {
+    state.selection[id] = next;
+  }
+
+  var el = document.getElementById('qty_' + id);
+  if (el) el.textContent = state.selection[id] || 0;
+
+  updateFloatingBar();
+}
+
+function updateFloatingBar() {
+  var bar = document.getElementById('floatingBar');
+  var totalEl = document.getElementById('txtSummaryTotal');
+  var count = 0;
+  var totalPrice = 0;
+
+  var items = state.data.items || [];
+  var itemMap = {};
+  items.forEach(function(it){ itemMap[it.id] = it; });
+
+  for (var id in state.selection) {
+    var qty = state.selection[id];
+    var it = itemMap[id];
+    if (it && qty > 0) {
+      count += qty;
+      if (!it.free) {
+        totalPrice += (it.price || 0) * qty;
+      }
+    }
+  }
+
+  if (count > 0) {
+    bar.classList.add('visible');
+    totalEl.textContent = count + ' Adet · ' + totalPrice.toLocaleString('tr-TR') + ' ₺';
+  } else {
+    bar.classList.remove('visible');
+  }
+}
+
+function openQrModal() {
+  var directUrl = window.location.origin + window.location.pathname;
+  document.getElementById('qrDirectUrl').textContent = directUrl;
+  document.getElementById('minibarQrBox').innerHTML = generatePseudoQrSvg('MARDIVA_MINIBAR', '#141619', '#ffffff', 180);
+  document.getElementById('qrModal').classList.add('open');
+}
+
+function closeQrModal() {
+  document.getElementById('qrModal').classList.remove('open');
+}
+
+function copyMinibarLink() {
+  var directUrl = window.location.origin + window.location.pathname;
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(directUrl);
+  } else {
+    var t = document.createElement('textarea');
+    t.value = directUrl;
+    document.body.appendChild(t);
+    t.select();
+    document.execCommand('copy');
+    t.remove();
+  }
+  showToast(UI_STRINGS[state.lang].linkCopied, 'success');
+}
+
+function requestRefill() {
+  var t = UI_STRINGS[state.lang];
+  var list = [];
+  var items = state.data.items || [];
+  var itemMap = {};
+  items.forEach(function(it){ itemMap[it.id] = it; });
+
+  for (var id in state.selection) {
+    var it = itemMap[id];
+    if (it && state.selection[id] > 0) {
+      var name = (it[state.lang] || it.tr || {}).name || it.id;
+      list.push(state.selection[id] + 'x ' + name);
+    }
+  }
+
+  if (list.length === 0) {
+    showToast(t.selectFirst, 'danger');
+    return;
+  }
+
+  showToast(t.refillSent, 'success');
+  setTimeout(function() {
+    window.location.href = 'tel:0';
+  }, 1000);
+}
+
+function generatePseudoQrSvg(text, fg, bg, size) {
+  fg = fg || '#141619';
+  bg = bg || '#ffffff';
+  size = size || 180;
+  var cells = 21;
+  var cellSize = size / cells;
+  var svg = '<svg width="'+size+'" height="'+size+'" viewBox="0 0 '+size+' '+size+'" xmlns="http://www.w3.org/2000/svg">';
+  svg += '<rect width="'+size+'" height="'+size+'" fill="'+bg+'"/>';
+
+  var hash = 0;
+  for (var i = 0; i < text.length; i++) {
+    hash = ((hash << 5) - hash) + text.charCodeAt(i);
+    hash |= 0;
+  }
+  var seed = Math.abs(hash) + 12345;
+  function rand() { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; }
+
+  for(var r=0; r<cells; r++){
+    for(var c=0; c<cells; c++){
+      var inFinder = (r<7&&c<7) || (r<7&&c>=cells-7) || (r>=cells-7&&c<7);
+      var dark = inFinder ? isFinderPattern(r,c,cells) : (rand() > 0.48);
+      if(dark){
+        svg += '<rect x="'+(c*cellSize)+'" y="'+(r*cellSize)+'" width="'+cellSize+'" height="'+cellSize+'" fill="'+fg+'"/>';
+      }
+    }
+  }
+  var logoSize = size * 0.24;
+  var logoPos = (size - logoSize) / 2;
+  svg += '<rect x="'+logoPos+'" y="'+logoPos+'" width="'+logoSize+'" height="'+logoSize+'" rx="4" fill="'+bg+'" stroke="'+fg+'" stroke-width="2"/>';
+  svg += '<text x="'+(size/2)+'" y="'+(size/2 + logoSize*0.18)+'" text-anchor="middle" font-size="'+(logoSize*0.5)+'" font-weight="bold" fill="'+fg+'" font-family="Arial">M</text>';
+  svg += '</svg>';
+  return svg;
+}
+
+function isFinderPattern(r, c, cells) {
+  if (r<7 && c<7) return (r===0||r===6||c===0||c===6) || (r>=2&&r<=4&&c>=2&&c<=4);
+  if (r<7 && c>=cells-7) { var lc = c-(cells-7); return (r===0||r===6||lc===0||lc===6) || (r>=2&&r<=4&&lc>=2&&lc<=4); }
+  if (r>=cells-7 && c<7) { var lr = r-(cells-7); return (lr===0||lr===6||c===0||c===6) || (lr>=2&&lr<=4&&c>=2&&c<=4); }
+  return false;
+}
+
+function showToast(msg, type) {
+  var container = document.getElementById('toastContainer');
+  var toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.textContent = msg;
+  container.appendChild(toast);
+  setTimeout(function(){
+    toast.style.opacity = '0';
+    toast.style.transform = 'translateY(-10px)';
+    toast.style.transition = 'all 0.3s ease';
+    setTimeout(function(){ toast.remove(); }, 300);
+  }, 2800);
+}
+
+function escHtml(s) {
+  return String(s || '').replace(/[&<>"]/g, function(c){
+    return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c];
+  });
+}
+
+window.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
